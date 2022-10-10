@@ -71,8 +71,8 @@ function MenuBar({ currentMenuItem }: MenuBarProps) {
         <Title>
             I'm Gyeongsu Jang
         </Title>
-        <MenuLink to="/ToDoList">ToDoList</MenuLink>
-        <MenuLink to="/Diary">Diary</MenuLink>
+        <MenuLink to="/toDoList">ToDoList</MenuLink>
+        <MenuLink to="/diary">Diary</MenuLink>
         <MenuLink to="/stockPrices">경수 주가</MenuLink>
         <MenuLink to="/protein">단백질 섭취량</MenuLink>
         <MenuLink to="/bookEssay">독후 에세이</MenuLink>
