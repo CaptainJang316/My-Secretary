@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { BsCheckLg } from "react-icons/bs";
+import { MdRemoveCircleOutline } from "react-icons/md";
 
 const BoardWrappper = styled.div`
     text-align: center;
@@ -15,7 +17,7 @@ const Board = styled.div`
     height: 28rem; 
     border: 1px solid black;
     border-radius: 10px;
-    background-color: gray;
+    background-color: #F0F8FF;
     display: inline-block;
 `;
 
@@ -28,9 +30,23 @@ const TaskItemLi = styled.li`
 `;
 
 const CompleteButton = styled.button`
-    width: 10px;
-    height: 10px;
+    // width: 10px;
+    // height: 10px;
     margin-left: 10px;
+    padding-top: 4px;
+    border-radius: 3px;
+    border: none;
+    color: green;
+`;
+
+const DeleteButton = styled.button`
+    // width: 10px;
+    // height: 10px;
+    margin-left: 5px;
+    padding-top: 4px;
+    border-radius: 3px;
+    border: none;
+    color: red;
 `;
 
 function ToDoList() {
@@ -55,10 +71,25 @@ function ToDoList() {
         }
     };
 
+    // const onClickDeleteButton = (selectedTask : String) => {
+    //     setTaskList.
+    // }
+
+    const onRemove = (selectedTask : String) => {
+        setTaskList(
+            taskList.filter(task => {
+            return task !== selectedTask;
+          })
+        );
+      };
+
     const menuList = taskList.map((task) => (
         <TaskItemLi>
-            {task}
-            {/* <CompleteButton></CompleteButton> */}
+            {task} 
+            <CompleteButton><BsCheckLg/></CompleteButton>
+            <DeleteButton
+                onClick={() => onRemove(task)}
+            ><MdRemoveCircleOutline/></DeleteButton>
         </TaskItemLi>
         ));
 
