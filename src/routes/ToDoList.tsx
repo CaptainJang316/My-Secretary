@@ -15,6 +15,7 @@ const BoardWrappper = styled.div`
 const Board = styled.div`
     margin: 50px 50px 50px 50px;
     padding: 20px;
+    pading-bottom: 0px;
     width: 250px;
     height: 28rem; 
     border: 1px solid black;
@@ -29,6 +30,27 @@ const Progress = styled.span`
     right: 20px;
     bottom: 20px;
     font-size: 1.2rem;
+`
+const ProgressBar = styled.progress`
+    position: absolute;
+    left: 0px;
+    bottom: -1px;
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+
+    appearance: none;
+    &::-webkit-progress-bar {
+        background:#f0f0f0;
+        border-radius:0px 0px 10px 10px;
+        box-shadow: inset 3px 3px 10px #ccc;
+    }
+    &::-webkit-progress-value {
+        border-radius:0px 10px 10px 10px;
+        background: #1D976C;
+        background: -webkit-linear-gradient(to right, #93F9B9, #1D976C);
+        background: linear-gradient(to right, #93F9B9, #1D976C);
+    }
 `
 
 const CustomInput = styled.input`
@@ -148,6 +170,7 @@ function ToDoList() {
                     />
                 {menuList}
                 <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{(complishedItemCount / taskList.length * 100).toFixed(1)} %</Progress>
+                <ProgressBar value={(complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
             </Board>
         </BoardWrappper>
     );
