@@ -16,12 +16,8 @@ const MenuItem = styled.div<MenuItemProps>`
 
 const MenuLink = styled(Link)`
     text-decoration: none;
-    color: black;
-    &:hover{  
-        color : gray;
-    }
+    color: gray;
     outline: none;
-
     &:hover{  
             background-color : black;
             border-radius: 15px;
@@ -37,6 +33,8 @@ const Container = styled.div<MenuBarProps>`
     currentMenuItem: ${(props) => props.currentMenuItem};
     // text-align: center;
     border-bottom: 1px solid gray;
+    background-color: black;
+    color: white;
 `;
 
 const ProfileWrapper = styled.div`

@@ -2,11 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { BsCheckLg } from "react-icons/bs";
 import { MdRemoveCircleOutline } from "react-icons/md";
+import { text } from 'node:stream/consumers';
+import { selector } from 'recoil';
 
 const BoardWrappper = styled.div`
     text-align: center;
     margin: auto;
-    // background-color: black;
+    background-color: black;
     // opacity: 0.2;
 `;
 
@@ -19,15 +21,23 @@ const Board = styled.div`
     border-radius: 10px;
     background-color: #F0F8FF;
     display: inline-block;
+    position: relative;
 `;
 
-const Custominput = styled.input`
+const Progress = styled.span`
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    font-size: 1.2rem;
+`
+
+const CustomInput = styled.input`
     box-sizing : border-box;
     margin-bottom: 15px;
     width: 85%;
 `
 
-const TaskItemList = styled.span`
+const TaskItem = styled.span`
     border-bottom: solid 1px white;
     padding-bottom: 5px;
     padding-top: 12px;
@@ -56,58 +66,88 @@ const DeleteButton = styled.button`
     color: red;
 `;
 
+interface toDoItemProps {
+    text: string;
+    isComplished: boolean;
+};
+
 function ToDoList() {
-    const [taskList, setTaskList] = React.useState<string[]>([]);
-    const [newTask, setNewTask] = React.useState('');
+    const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
+    const [newTask, setNewTask] = React.useState<toDoItemProps>({text: '', isComplished: false});
 
     const onChange = (event: any) => {
-        setNewTask(event.target.value);
+        setNewTask({
+            text: event.target.value,
+            isComplished: false,
+        });
     };
 
-    const handleOnClick = () => {
-        const currentTaskList = taskList;
-        currentTaskList.push(newTask)
-        setTaskList(currentTaskList);
-        setNewTask("");
-        console.log(currentTaskList);
+    const addNewItem = () => {
+        // const currentTaskList = taskList;
+        // currentTaskList.push(newTask)
+        setTaskList([...taskList, newTask]);
+        setNewTask({
+            text: '',
+            isComplished: false,
+        });
+        console.log(taskList);
     };
         
     const handleOnKeyPress = (e: { key: string; }) => {
         if (e.key === 'Enter') {
-            handleOnClick(); // Enter 입력이 되면 클릭 이벤트 실행
+            addNewItem(); // Enter 입력이 되면 클릭 이벤트 실행
         }
     };
 
-    const onRemove = (selectedTask : String) => {
+    const onComplish = (selectedTask : toDoItemProps) => {
+        const currentTaskList = taskList;
+        currentTaskList.map(task => {
+            if(task.text == selectedTask.text)
+                task.isComplished = !task.isComplished; 
+        });
+        setTaskList([...currentTaskList]);
+        console.log("currentTaskList: ", currentTaskList);
+    };
+
+
+    const onRemove = (selectedTask : toDoItemProps) => {
         setTaskList(
             taskList.filter(task => {
-            return task !== selectedTask;
+            return task.text !== selectedTask.text;
           })
         );
       };
 
-    const menuList = taskList.map((task) => (
-        <TaskItemList>
-            {task} 
-            <span>
-                <CompleteButton><BsCheckLg/></CompleteButton>
-                <DeleteButton
-                    onClick={() => onRemove(task)}
-                ><MdRemoveCircleOutline/></DeleteButton>
-            </span>
-        </TaskItemList>
-        ));
+    var complishedItemCount = 0;
+    const menuList = taskList.map((task) => {
+        if(task.isComplished) complishedItemCount++;
+
+        return (
+            <TaskItem className={task.isComplished? "complished-item" : ''}>
+                {task.text} 
+                <span>
+                    <CompleteButton
+                        onClick={() => onComplish(task)}
+                    ><BsCheckLg/></CompleteButton>
+                    <DeleteButton
+                        onClick={() => onRemove(task)}
+                    ><MdRemoveCircleOutline/></DeleteButton>
+                </span>
+            </TaskItem>
+            );
+    })
 
     return(
         <BoardWrappper>
             <Board>
-                new: <Custominput 
+                new: <CustomInput 
                     type="String"
-                    value={newTask}
+                    value={newTask.text}
                     onKeyPress={handleOnKeyPress}
                     onChange={onChange}
                     />
                 {menuList}
+                <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{(complishedItemCount / taskList.length * 100).toFixed(1)} %</Progress>
             </Board>
         </BoardWrappper>
     );
