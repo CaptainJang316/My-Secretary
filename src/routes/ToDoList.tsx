@@ -21,12 +21,19 @@ const Board = styled.div`
     display: inline-block;
 `;
 
-const TaskListOl = styled.ol`
-    text-align: start;
-`;
+const Custominput = styled.input`
+    box-sizing : border-box;
+    margin-bottom: 15px;
+    width: 85%;
+`
 
-const TaskItemLi = styled.li`
-    padding-top: 5px;
+const TaskItemList = styled.span`
+    border-bottom: solid 1px white;
+    padding-bottom: 5px;
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 `;
 
 const CompleteButton = styled.button`
@@ -71,10 +78,6 @@ function ToDoList() {
         }
     };
 
-    // const onClickDeleteButton = (selectedTask : String) => {
-    //     setTaskList.
-    // }
-
     const onRemove = (selectedTask : String) => {
         setTaskList(
             taskList.filter(task => {
@@ -84,27 +87,27 @@ function ToDoList() {
       };
 
     const menuList = taskList.map((task) => (
-        <TaskItemLi>
+        <TaskItemList>
             {task} 
-            <CompleteButton><BsCheckLg/></CompleteButton>
-            <DeleteButton
-                onClick={() => onRemove(task)}
-            ><MdRemoveCircleOutline/></DeleteButton>
-        </TaskItemLi>
+            <span>
+                <CompleteButton><BsCheckLg/></CompleteButton>
+                <DeleteButton
+                    onClick={() => onRemove(task)}
+                ><MdRemoveCircleOutline/></DeleteButton>
+            </span>
+        </TaskItemList>
         ));
 
     return(
         <BoardWrappper>
             <Board>
-                new: <input 
+                new: <Custominput 
                     type="String"
                     value={newTask}
                     onKeyPress={handleOnKeyPress}
                     onChange={onChange}
                     />
-                <TaskListOl>
-                    {menuList}
-                </TaskListOl>
+                {menuList}
             </Board>
         </BoardWrappper>
     );
