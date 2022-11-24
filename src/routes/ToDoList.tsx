@@ -88,6 +88,10 @@ const DeleteButton = styled.button`
     color: red;
 `;
 
+const BoardTitle = styled.h3`
+    margin-top: 0px;
+`
+
 interface toDoItemProps {
     text: string;
     isComplished: boolean;
@@ -140,6 +144,19 @@ function ToDoList() {
         );
       };
 
+    const getDay = () => { 
+
+        const week = ['일', '월', '화', '수', '목', '금', '토'];
+        const dayOfWeek = week[new Date().getDay()];
+        var date = new Date();
+        const getDay = date.getMonth()+1 + "/" + date.getDate() + "(" + dayOfWeek + ")";
+
+        return getDay;
+    }
+    
+    
+    console.log();
+
     var complishedItemCount = 0;
     const menuList = taskList.map((task) => {
         if(task.isComplished) complishedItemCount++;
@@ -162,6 +179,7 @@ function ToDoList() {
     return(
         <BoardWrappper>
             <Board>
+                <BoardTitle>{getDay()} - ToDoList</BoardTitle>
                 new: <CustomInput 
                     type="String"
                     value={newTask.text}
@@ -169,7 +187,7 @@ function ToDoList() {
                     onChange={onChange}
                     />
                 {menuList}
-                <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{(complishedItemCount / taskList.length * 100).toFixed(1)} %</Progress>
+                <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>
                 <ProgressBar value={(complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
             </Board>
         </BoardWrappper>
