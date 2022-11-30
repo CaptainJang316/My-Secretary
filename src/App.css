@@ -48,3 +48,26 @@
   color: green;
   font-weight: bold;
 }
+
+.modal-component {
+  position: absolute;
+  border: 1px solid rgb(204, 204, 204);
+  background: rgb(255, 255, 255);
+  overflow: auto;
+  width: 30%;
+  border-radius: 4px;
+  outline: none;
+  padding: 20px;
+  height: 50px;
+  /* inset: 320px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ReactModal__Overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}

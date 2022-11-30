@@ -4,11 +4,14 @@ import { BsCheckLg } from "react-icons/bs";
 import { MdRemoveCircleOutline } from "react-icons/md";
 import { text } from 'node:stream/consumers';
 import { selector } from 'recoil';
+import Modal from 'react-modal';
+// import '../App.css';
 
 const BoardWrappper = styled.div`
     text-align: center;
     margin: auto;
     background-color: black;
+    height: 40.2rem;
     // opacity: 0.2;
 `;
 
@@ -100,6 +103,7 @@ interface toDoItemProps {
 function ToDoList() {
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [newTask, setNewTask] = React.useState<toDoItemProps>({text: '', isComplished: false});
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
 
     const onChange = (event: any) => {
         setNewTask({
@@ -118,10 +122,26 @@ function ToDoList() {
         });
         console.log(taskList);
     };
+
+    const checkValidation = () => {
+        var flag = false;
+
+        taskList.forEach((taskItem) => {
+            console.log("taskItem: ", taskItem.text);
+            console.log("newTask: ", newTask.text);
+            if(taskItem.text == newTask.text) {
+                flag = true;
+                return false;
+            }
+        })
+        return flag;
+    };
         
     const handleOnKeyPress = (e: { key: string; }) => {
         if (e.key === 'Enter') {
-            addNewItem(); // Enter 입력이 되면 클릭 이벤트 실행
+            if(!checkValidation())
+                addNewItem(); // Enter 입력이 되면 클릭 이벤트 실행
+            else setIsModalOpen(true);
         }
     };
 
@@ -177,20 +197,25 @@ function ToDoList() {
     })
 
     return(
-        <BoardWrappper>
-            <Board>
-                <BoardTitle>{getDay()} - ToDoList</BoardTitle>
-                new: <CustomInput 
-                    type="String"
-                    value={newTask.text}
-                    onKeyPress={handleOnKeyPress}
-                    onChange={onChange}
-                    />
-                {menuList}
-                <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>
-                <ProgressBar value={(complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
-            </Board>
-        </BoardWrappper>
+        <>
+            <Modal className="modal-component" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+                해당 항목은 이미 존재합니다.
+            </Modal>
+            <BoardWrappper>
+                <Board>
+                    <BoardTitle>{getDay()} - ToDoList</BoardTitle>
+                    new: <CustomInput 
+                        type="String"
+                        value={newTask.text}
+                        onKeyPress={handleOnKeyPress}
+                        onChange={onChange}
+                        />
+                    {menuList}
+                    <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>
+                    <ProgressBar value={(complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
+                </Board>
+            </BoardWrappper>
+        </>
     );
 }
 
