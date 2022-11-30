@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { BsCheckLg } from "react-icons/bs";
+import { IoClose } from "react-icons/io5";
 import { MdRemoveCircleOutline } from "react-icons/md";
 import { text } from 'node:stream/consumers';
 import { selector } from 'recoil';
 import Modal from 'react-modal';
-// import '../App.css';
+
 
 const BoardWrappper = styled.div`
     text-align: center;
@@ -95,6 +96,25 @@ const BoardTitle = styled.h3`
     margin-top: 0px;
 `
 
+const ModalButton = styled.button`
+    position: absolute;
+    padding: 0;
+    background-color: black;
+    top: 2px;
+    right: 2px;
+    width: 16.5px;
+    height: 16.5px;
+    border-radius: 2px;
+
+    &:hover {
+        cursor:pointer;
+    }
+`
+
+const WhiteIoClose = styled(IoClose)`
+    color: white;
+`;
+
 interface toDoItemProps {
     text: string;
     isComplished: boolean;
@@ -173,6 +193,10 @@ function ToDoList() {
 
         return getDay;
     }
+
+    const onClickCloseModalButton = () => {
+        setIsModalOpen(false);
+    }
     
     
     console.log();
@@ -200,6 +224,9 @@ function ToDoList() {
         <>
             <Modal className="modal-component" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
                 해당 항목은 이미 존재합니다.
+                <ModalButton onClick={onClickCloseModalButton}>
+                    <WhiteIoClose/>
+                </ModalButton>
             </Modal>
             <BoardWrappper>
                 <Board>
