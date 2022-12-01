@@ -6,7 +6,8 @@ import { MdRemoveCircleOutline } from "react-icons/md";
 import { text } from 'node:stream/consumers';
 import { selector } from 'recoil';
 import Modal from 'react-modal';
-
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const BoardWrappper = styled.div`
     text-align: center;
@@ -17,7 +18,7 @@ const BoardWrappper = styled.div`
 `;
 
 const Board = styled.div`
-    margin: 50px 50px 50px 50px;
+    margin: 50px 50px 15px 50px;
     padding: 20px;
     pading-bottom: 0px;
     width: 250px;
@@ -115,6 +116,10 @@ const WhiteIoClose = styled(IoClose)`
     color: white;
 `;
 
+const CalendarButton = styled.button`
+    margin-left: 220px;
+`
+
 interface toDoItemProps {
     text: string;
     isComplished: boolean;
@@ -124,6 +129,8 @@ function ToDoList() {
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [newTask, setNewTask] = React.useState<toDoItemProps>({text: '', isComplished: false});
     const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
+    const [selectedDate, setSelectedDate] = React.useState(new Date());
 
     const onChange = (event: any) => {
         setNewTask({
@@ -196,6 +203,11 @@ function ToDoList() {
 
     const onClickCloseModalButton = () => {
         setIsModalOpen(false);
+        setIsCalendarModalOpen(false);
+    }
+
+    const onClickCalendarButton = () => {
+        setIsCalendarModalOpen(true);
     }
     
     
@@ -241,6 +253,15 @@ function ToDoList() {
                     <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>
                     <ProgressBar value={(complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
                 </Board>
+                <div>
+                    <CalendarButton onClick={onClickCalendarButton}>일정</CalendarButton>
+                </div>
+                <Modal isOpen={isCalendarModalOpen}>
+                    <Calendar value={selectedDate} onChange={setSelectedDate}/>
+                    <ModalButton onClick={onClickCloseModalButton}>
+                        <WhiteIoClose/>
+                    </ModalButton>
+                </Modal>
             </BoardWrappper>
         </>
     );
