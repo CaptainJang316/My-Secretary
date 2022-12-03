@@ -71,3 +71,27 @@
   align-items: center;
   min-height: 100vh;
 }
+
+.calendar-modal-component {
+  position: relative;
+  border: 1px solid rgb(204, 204, 204);
+  background: rgb(255, 255, 255);
+  overflow: auto;
+  /* width: 300px; */
+  border-radius: 4px;
+  outline: none;
+  padding: 20px;
+  height: 500px;
+  /* inset: 320px; */
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+}
+
+.calendar .react-calendar {
+  width: 360px;
+}
+
+.calendar .react-calendar__tile {
+  line-height: 20px;
+}

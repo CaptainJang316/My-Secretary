@@ -120,6 +120,13 @@ const CalendarButton = styled.button`
     margin-left: 220px;
 `
 
+const ScheduleBox = styled.div`
+    margin-top: 10px;
+    border: 1px solid #a0a096;
+    height: 175px;
+    padding: 10px;
+`;
+
 interface toDoItemProps {
     text: string;
     isComplished: boolean;
@@ -256,11 +263,14 @@ function ToDoList() {
                 <div>
                     <CalendarButton onClick={onClickCalendarButton}>일정</CalendarButton>
                 </div>
-                <Modal isOpen={isCalendarModalOpen}>
-                    <Calendar value={selectedDate} onChange={setSelectedDate}/>
+                <Modal className="calendar-modal-component" isOpen={isCalendarModalOpen} onRequestClose={() => setIsCalendarModalOpen(false)}>
+                    <Calendar className="calendar" value={selectedDate} onChange={setSelectedDate}/>
                     <ModalButton onClick={onClickCloseModalButton}>
                         <WhiteIoClose/>
                     </ModalButton>
+                    <ScheduleBox>
+                        일정이 없습니다.
+                    </ScheduleBox>
                 </Modal>
             </BoardWrappper>
         </>
