@@ -148,14 +148,17 @@ function ToDoList() {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
+    const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>({date: selectedDate, content: ''});
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
+
+console.log("scheduleList:, ", scheduleList);
 
     useEffect(() => {
         setSelectedDateScheduleList(
             scheduleList.filter(element => selectedDate == element.date)
         )
-    }, [selectedDate]); 
+    }, [selectedDate, scheduleList]); 
 
     const onChange = (event: any) => {
         setNewTask({
@@ -163,6 +166,14 @@ function ToDoList() {
             isComplished: false,
         });
     };
+
+    const onChangeScheduleInput = (event: any) => {
+        setScheduleItem({
+            date: selectedDate,
+            content: event.target.value,
+        });
+    };
+
 
     const addNewItem = () => {
         // const currentTaskList = taskList;
@@ -174,6 +185,16 @@ function ToDoList() {
         });
         console.log(taskList);
     };
+
+    const addNewSchedule = () => {
+        setScheduleList ([...scheduleList, scheduleItem]);
+        setScheduleItem({
+            date: selectedDate,
+            content: '',
+        });
+        console.log(scheduleItem);
+    };
+
 
     const checkValidation = () => {
         var flag = false;
@@ -194,6 +215,12 @@ function ToDoList() {
             if(!checkValidation())
                 addNewItem(); // Enter 입력이 되면 클릭 이벤트 실행
             else setIsModalOpen(true);
+        }
+    };
+
+    const handleOnKeyPressScheduleInput = (e: { key: string; }) => {
+        if (e.key === 'Enter') {
+            addNewSchedule();
         }
     };
 
@@ -257,6 +284,14 @@ function ToDoList() {
             );
     })
 
+    const scheduleItemList = selectedDateScheduleList.map((item) => {
+        return (
+            <>
+                {item.content}<br/>
+            </>
+        );
+    })
+
     return(
         <>
             <Modal className="modal-component" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
@@ -287,10 +322,16 @@ function ToDoList() {
                         <WhiteIoClose/>
                     </ModalButton>
                     <ScheduleBox>
-                        {selectedDateScheduleList.map(item => item.content)}<br/> 
+                        {scheduleItemList}<br/> 
                         <NoScheduleDiv>
                             일정이 없습니다.<br/><br/>
-                            <button>일정 추가하기</button>
+                            <CustomInput 
+                                type="String"
+                                value={scheduleItem.content}
+                                onKeyPress={handleOnKeyPressScheduleInput}
+                                onChange={onChangeScheduleInput}
+                            />
+                            <button onClick={addNewSchedule}>일정 추가하기</button>
                         </NoScheduleDiv>
                     </ScheduleBox>
                 </Modal>
