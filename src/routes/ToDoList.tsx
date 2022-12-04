@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { BsCheckLg } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
@@ -127,10 +127,20 @@ const ScheduleBox = styled.div`
     padding: 10px;
 `;
 
+const NoScheduleDiv = styled.div`
+    padding: 10px;
+    text-align: center;
+`
+
 interface toDoItemProps {
-    text: string;
+    text: string; 
     isComplished: boolean;
 };
+
+interface scheduleProps {
+    date: Date;
+    content: string;
+}
 
 function ToDoList() {
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
@@ -138,6 +148,14 @@ function ToDoList() {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
+    const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
+    const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
+
+    useEffect(() => {
+        setSelectedDateScheduleList(
+            scheduleList.filter(element => selectedDate == element.date)
+        )
+    }, [selectedDate]); 
 
     const onChange = (event: any) => {
         setNewTask({
@@ -269,7 +287,11 @@ function ToDoList() {
                         <WhiteIoClose/>
                     </ModalButton>
                     <ScheduleBox>
-                        일정이 없습니다.
+                        {selectedDateScheduleList.map(item => item.content)}<br/> 
+                        <NoScheduleDiv>
+                            일정이 없습니다.<br/><br/>
+                            <button>일정 추가하기</button>
+                        </NoScheduleDiv>
                     </ScheduleBox>
                 </Modal>
             </BoardWrappper>
