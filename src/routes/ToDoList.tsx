@@ -138,7 +138,7 @@ interface toDoItemProps {
 };
 
 interface scheduleProps {
-    date: Date;
+    date: string;
     content: string;
 }
 
@@ -148,7 +148,7 @@ function ToDoList() {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
-    const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>({date: selectedDate, content: ''});
+    const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>({date: '', content: ''});
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
 
@@ -156,7 +156,7 @@ console.log("scheduleList:, ", scheduleList);
 
     useEffect(() => {
         setSelectedDateScheduleList(
-            scheduleList.filter(element => selectedDate == element.date)
+            scheduleList.filter(element => Intl.DateTimeFormat('kr').format(selectedDate) == element.date)
         )
     }, [selectedDate, scheduleList]); 
 
@@ -169,7 +169,7 @@ console.log("scheduleList:, ", scheduleList);
 
     const onChangeScheduleInput = (event: any) => {
         setScheduleItem({
-            date: selectedDate,
+            date: Intl.DateTimeFormat('kr').format(selectedDate),
             content: event.target.value,
         });
     };
@@ -189,7 +189,7 @@ console.log("scheduleList:, ", scheduleList);
     const addNewSchedule = () => {
         setScheduleList ([...scheduleList, scheduleItem]);
         setScheduleItem({
-            date: selectedDate,
+            date: Intl.DateTimeFormat('kr').format(selectedDate),
             content: '',
         });
         console.log(scheduleItem);
@@ -332,7 +332,7 @@ console.log("scheduleList:, ", scheduleList);
                                 onChange={onChangeScheduleInput}
                             />
                             <button onClick={addNewSchedule}>일정 추가하기</button>
-                        </NoScheduleDiv>
+                        </NoScheduleDiv>    
                     </ScheduleBox>
                 </Modal>
             </BoardWrappper>
