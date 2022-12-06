@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { BsCheckLg } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
@@ -60,7 +60,6 @@ const ProgressBar = styled.progress`
 
 const CustomInput = styled.input`
     box-sizing : border-box;
-    margin-bottom: 15px;
     width: 85%;
 `
 
@@ -151,6 +150,7 @@ function ToDoList() {
     const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>({date: '', content: ''});
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
+    const [showEmptyError, setShowEmptyError] = React.useState(false);
 
 console.log("scheduleList:, ", scheduleList);
 
@@ -159,6 +159,10 @@ console.log("scheduleList:, ", scheduleList);
             scheduleList.filter(element => Intl.DateTimeFormat('kr').format(selectedDate) == element.date)
         )
     }, [selectedDate, scheduleList]); 
+    
+    const ErrorMessage = useMemo(()=>{
+        return <>{showEmptyError? "내용을 입력하세요." : ""}</>;
+    }, [showEmptyError]);
 
     const onChange = (event: any) => {
         setNewTask({
@@ -192,6 +196,7 @@ console.log("scheduleList:, ", scheduleList);
             date: Intl.DateTimeFormat('kr').format(selectedDate),
             content: '',
         });
+        setShowEmptyError(false);
         console.log(scheduleItem);
     };
 
@@ -199,6 +204,8 @@ console.log("scheduleList:, ", scheduleList);
     const checkValidation = () => {
         var flag = false;
 
+        if(scheduleItem.content.replace("/^\s+|\s+$/g", "") == "")
+            return false;
         taskList.forEach((taskItem) => {
             console.log("taskItem: ", taskItem.text);
             console.log("newTask: ", newTask.text);
@@ -207,22 +214,56 @@ console.log("scheduleList:, ", scheduleList);
                 return false;
             }
         })
+        return flag; 
+    };
+
+    const checkEmptyScheduleItem = () => {
+        if(scheduleItem.content.replace("/^\s+|\s+$/g", "") == "")
+            return true;
+        return false;
+    };
+    const checkExistingScheduleItem = () => {
+        var flag = false;
+        
+        selectedDateScheduleList.forEach((taskItem) => {
+            if(taskItem.content == scheduleItem.content) {
+                flag = true;
+                return false;
+            }
+        })
         return flag;
     };
         
     const handleOnKeyPress = (e: { key: string; }) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter') {// Enter 입력이 되면 클릭 이벤트 실행
+            
             if(!checkValidation())
-                addNewItem(); // Enter 입력이 되면 클릭 이벤트 실행
+                addNewItem(); 
             else setIsModalOpen(true);
         }
     };
 
+    const checkValidationScheduleInput = () => {
+        if(checkEmptyScheduleItem()) {
+            setShowEmptyError(true);
+            return false;
+        } else if(checkExistingScheduleItem()) {
+            setIsModalOpen(true);
+            return false; 
+        } else return true;
+    }
+
     const handleOnKeyPressScheduleInput = (e: { key: string; }) => {
-        if (e.key === 'Enter') {
-            addNewSchedule();
+        if (e.key === 'Enter') {// Enter 입력이 되면 클릭 이벤트 실행
+            if(checkValidationScheduleInput())
+                addNewSchedule();
         }
     };
+
+    const onClickAddScheduleButton = () => {
+        if(checkValidationScheduleInput())
+            addNewSchedule();
+    }
 
     const onComplish = (selectedTask : toDoItemProps) => {
         const currentTaskList = taskList;
@@ -295,7 +336,7 @@ console.log("scheduleList:, ", scheduleList);
     return(
         <>
             <Modal className="modal-component" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-                해당 항목은 이미 존재합니다.
+                {showEmptyError? "내용을 입력하세요." : "해당 항목은 이미 존재합니다."}
                 <ModalButton onClick={onClickCloseModalButton}>
                     <WhiteIoClose/>
                 </ModalButton>
@@ -324,14 +365,15 @@ console.log("scheduleList:, ", scheduleList);
                     <ScheduleBox>
                         {scheduleItemList}<br/> 
                         <NoScheduleDiv>
-                            일정이 없습니다.<br/><br/>
+                            {selectedDateScheduleList.length == 0 ? <>일정이 없습니다.<br/><br/></> : ""}
                             <CustomInput 
                                 type="String"
                                 value={scheduleItem.content}
                                 onKeyPress={handleOnKeyPressScheduleInput}
                                 onChange={onChangeScheduleInput}
                             />
-                            <button onClick={addNewSchedule}>일정 추가하기</button>
+                            <br/>{ErrorMessage}<br/><br/>
+                            <button onClick={onClickAddScheduleButton}>일정 추가하기</button>
                         </NoScheduleDiv>    
                     </ScheduleBox>
                 </Modal>
