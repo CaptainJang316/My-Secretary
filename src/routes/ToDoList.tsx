@@ -60,7 +60,8 @@ const ProgressBar = styled.progress`
 
 const CustomInput = styled.input`
     box-sizing : border-box;
-    width: 85%;
+    width: 80%;
+    margin: 5px;
 `
 
 const TaskItem = styled.span`
@@ -130,6 +131,13 @@ const NoScheduleDiv = styled.div`
     padding: 10px;
     text-align: center;
 `
+const ErrorMessageDiv = styled.div` 
+    text-align: start;
+    padding-left: 12px;
+    color: red;
+    font-size: 0.8rem;
+`
+
 
 interface toDoItemProps {
     text: string; 
@@ -151,6 +159,7 @@ function ToDoList() {
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
     const [showEmptyError, setShowEmptyError] = React.useState(false);
+    const [showExistingItemError, setShowExistingItemError] = React.useState(false);
 
 console.log("scheduleList:, ", scheduleList);
 
@@ -161,8 +170,9 @@ console.log("scheduleList:, ", scheduleList);
     }, [selectedDate, scheduleList]); 
     
     const ErrorMessage = useMemo(()=>{
-        return <>{showEmptyError? "내용을 입력하세요." : ""}</>;
-    }, [showEmptyError]);
+        return <>{showEmptyError? "내용을 입력하세요." 
+                    : showExistingItemError? "해당 항목은 이미 존재합니다." : ""}</>;
+    }, [showEmptyError, showExistingItemError]);
 
     const onChange = (event: any) => {
         setNewTask({
@@ -196,7 +206,6 @@ console.log("scheduleList:, ", scheduleList);
             date: Intl.DateTimeFormat('kr').format(selectedDate),
             content: '',
         });
-        setShowEmptyError(false);
         console.log(scheduleItem);
     };
 
@@ -248,13 +257,15 @@ console.log("scheduleList:, ", scheduleList);
             setShowEmptyError(true);
             return false;
         } else if(checkExistingScheduleItem()) {
-            setIsModalOpen(true);
+            setShowExistingItemError(true);
             return false; 
         } else return true;
     }
 
     const handleOnKeyPressScheduleInput = (e: { key: string; }) => {
         if (e.key === 'Enter') {// Enter 입력이 되면 클릭 이벤트 실행
+            setShowEmptyError(false);
+            setShowExistingItemError(false);
             if(checkValidationScheduleInput())
                 addNewSchedule();
         }
@@ -327,9 +338,7 @@ console.log("scheduleList:, ", scheduleList);
 
     const scheduleItemList = selectedDateScheduleList.map((item) => {
         return (
-            <>
-                {item.content}<br/>
-            </>
+            <li>{item.content}</li>
         );
     })
 
@@ -372,8 +381,8 @@ console.log("scheduleList:, ", scheduleList);
                                 onKeyPress={handleOnKeyPressScheduleInput}
                                 onChange={onChangeScheduleInput}
                             />
-                            <br/>{ErrorMessage}<br/><br/>
-                            <button onClick={onClickAddScheduleButton}>일정 추가하기</button>
+                            <button onClick={onClickAddScheduleButton}>추가</button>
+                            <ErrorMessageDiv>{ErrorMessage}</ErrorMessageDiv>
                         </NoScheduleDiv>    
                     </ScheduleBox>
                 </Modal>
