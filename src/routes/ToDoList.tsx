@@ -122,13 +122,15 @@ const CalendarButton = styled.button`
 
 const ScheduleBox = styled.div`
     margin-top: 10px;
+    // margin-bottom: 20px;
     border: 1px solid #a0a096;
-    height: 175px;
+    height: 155px;
     padding: 10px;
+    overflow: auto;
 `;
 
 const NoScheduleDiv = styled.div`
-    padding: 10px;
+    padding: 35px;
     text-align: center;
 `
 const ErrorMessageDiv = styled.div` 
@@ -136,6 +138,16 @@ const ErrorMessageDiv = styled.div`
     padding-left: 12px;
     color: red;
     font-size: 0.8rem;
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+`
+
+const ScheduleInputWrapper = styled.div`
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    width: 96.2%;
 `
 
 
@@ -375,16 +387,18 @@ console.log("scheduleList:, ", scheduleList);
                         {scheduleItemList}<br/> 
                         <NoScheduleDiv>
                             {selectedDateScheduleList.length == 0 ? <>일정이 없습니다.<br/><br/></> : ""}
-                            <CustomInput 
-                                type="String"
-                                value={scheduleItem.content}
-                                onKeyPress={handleOnKeyPressScheduleInput}
-                                onChange={onChangeScheduleInput}
-                            />
-                            <button onClick={onClickAddScheduleButton}>추가</button>
-                            <ErrorMessageDiv>{ErrorMessage}</ErrorMessageDiv>
                         </NoScheduleDiv>    
                     </ScheduleBox>
+                    <ScheduleInputWrapper>
+                        <CustomInput 
+                            type="String"
+                            value={scheduleItem.content}
+                            onKeyPress={handleOnKeyPressScheduleInput}
+                            onChange={onChangeScheduleInput}
+                        />
+                        <button onClick={onClickAddScheduleButton}>추가</button>
+                    </ScheduleInputWrapper>
+                    <ErrorMessageDiv>{ErrorMessage}</ErrorMessageDiv>
                 </Modal>
             </BoardWrappper>
         </>
