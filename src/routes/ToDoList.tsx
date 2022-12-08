@@ -8,12 +8,13 @@ import { selector } from 'recoil';
 import Modal from 'react-modal';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { useForm } from "react-hook-form";
 
 const BoardWrappper = styled.div`
     text-align: center;
     margin: auto;
     background-color: black;
-    height: 40.2rem;
+    height: 89.5vh;
     // opacity: 0.2;
 `;
 
@@ -162,6 +163,9 @@ interface scheduleProps {
 }
 
 function ToDoList() {
+    const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm();
+    // console.log("??: ", formState);
+
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [newTask, setNewTask] = React.useState<toDoItemProps>({text: '', isComplished: false});
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -172,8 +176,6 @@ function ToDoList() {
     const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
-
-console.log("scheduleList:, ", scheduleList);
 
     useEffect(() => {
         setSelectedDateScheduleList(
@@ -193,12 +195,12 @@ console.log("scheduleList:, ", scheduleList);
         });
     };
 
-    const onChangeScheduleInput = (event: any) => {
-        setScheduleItem({
-            date: Intl.DateTimeFormat('kr').format(selectedDate),
-            content: event.target.value,
-        });
-    };
+    // const onChangeScheduleInput = (event: any) => {
+    //     setScheduleItem({
+    //         date: Intl.DateTimeFormat('kr').format(selectedDate),
+    //         content: event.target.value,
+    //     });
+    // };
 
 
     const addNewItem = () => {
@@ -213,14 +215,20 @@ console.log("scheduleList:, ", scheduleList);
     };
 
     const addNewSchedule = () => {
+        // console.log("?!: ", watch());
+        console.log("scheduleItem?: ", scheduleItem);
         setScheduleList ([...scheduleList, scheduleItem]);
         setScheduleItem({
             date: Intl.DateTimeFormat('kr').format(selectedDate),
             content: '',
         });
-        console.log(scheduleItem);
+        console.log("scheduleItem?@: ", scheduleItem);
+        setValue("scheduleItem", {
+            date: Intl.DateTimeFormat('kr').format(selectedDate),
+            content: '',
+        });
+        // console.log(scheduleItem);
     };
-
 
     const checkValidation = () => {
         var flag = false;
@@ -238,16 +246,17 @@ console.log("scheduleList:, ", scheduleList);
         return flag; 
     };
 
-    const checkEmptyScheduleItem = () => {
-        if(scheduleItem.content.replace("/^\s+|\s+$/g", "") == "")
-            return true;
-        return false;
-    };
+    // const checkEmptyScheduleItem = () => {
+    //     if(scheduleItem.content.replace("/^\s+|\s+$/g", "") == "")
+    //         return true;
+    //     return false;
+    // };
+
     const checkExistingScheduleItem = () => {
         var flag = false;
         
         selectedDateScheduleList.forEach((taskItem) => {
-            if(taskItem.content == scheduleItem.content) {
+            if(taskItem.content == getValues("scheduleItem.content")) {
                 flag = true;
                 return false;
             }
@@ -264,29 +273,55 @@ console.log("scheduleList:, ", scheduleList);
         }
     };
 
-    const checkValidationScheduleInput = () => {
-        if(checkEmptyScheduleItem()) {
-            setShowEmptyError(true);
-            return false;
-        } else if(checkExistingScheduleItem()) {
-            setShowExistingItemError(true);
-            return false; 
-        } else return true;
+    const onValid = (data: any) => {
+        console.log("onValid 진입");
+        console.log("register: ", data.scheduleItem.content);
+        setScheduleItem({
+            date: Intl.DateTimeFormat('kr').format(selectedDate),
+            content: getValues("scheduleItem.content"),
+        });
+        if(checkExistingScheduleItem()) {
+            setError("scheduleItem", { message: "해당 항목은 이미 존재합니다."}); 
+            console.log("aaaa");
+        } else {
+            console.log("scheduleItem!!!: ", scheduleItem.content);
+            console.log("scheduleItemList!!!: ", scheduleItemList);
+            addNewSchedule();
+        }
     }
+
+    // const checkValidationScheduleInput = () => {
+    //     console.log("ASDFASDF");
+    //     if(checkEmptyScheduleItem()) {
+    //         setShowEmptyError(true);
+    //         return false;
+    //     } else if(checkExistingScheduleItem()) {
+    //         setShowExistingItemError(true);
+    //         return false; 
+    //     } else return true;
+    // }
 
     const handleOnKeyPressScheduleInput = (e: { key: string; }) => {
         if (e.key === 'Enter') {// Enter 입력이 되면 클릭 이벤트 실행
-            setShowEmptyError(false);
-            setShowExistingItemError(false);
-            if(checkValidationScheduleInput())
-                addNewSchedule();
+            // setShowEmptyError(false);
+            // setShowExistingItemError(false);
+            // if(checkValidationScheduleInput())
+            //     addNewSchedule();
+            console.log("엔터키 입력 인식.");
+            setScheduleItem({
+                date: Intl.DateTimeFormat('kr').format(selectedDate),
+                content: getValues("scheduleItem.content"),
+            });
+
+            handleSubmit(onValid);
+            console.log("handleSubmit 완료");
         }
     };
 
-    const onClickAddScheduleButton = () => {
-        if(checkValidationScheduleInput())
-            addNewSchedule();
-    }
+    // const onClickAddScheduleButton = () => {
+    //     if(checkValidationScheduleInput())
+    //         addNewSchedule();
+    // }
 
     const onComplish = (selectedTask : toDoItemProps) => {
         const currentTaskList = taskList;
@@ -352,8 +387,10 @@ console.log("scheduleList:, ", scheduleList);
         return (
             <li>{item.content}</li>
         );
-    })
+    });
 
+
+    console.log(watch());
     return(
         <>
             <Modal className="modal-component" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
@@ -390,15 +427,24 @@ console.log("scheduleList:, ", scheduleList);
                         </NoScheduleDiv>    
                     </ScheduleBox>
                     <ScheduleInputWrapper>
-                        <CustomInput 
-                            type="String"
-                            value={scheduleItem.content}
-                            onKeyPress={handleOnKeyPressScheduleInput}
-                            onChange={onChangeScheduleInput}
-                        />
-                        <button onClick={onClickAddScheduleButton}>추가</button>
-                    </ScheduleInputWrapper>
-                    <ErrorMessageDiv>{ErrorMessage}</ErrorMessageDiv>
+                        <form onSubmit={handleSubmit(onValid)} onKeyPress={handleOnKeyPressScheduleInput}>
+                            <CustomInput
+                                {...register("scheduleItem.content", {
+                                    required: "내용을 입력해주세요.",
+                                    pattern: {
+                                        value:  /[^\s]/,
+                                        message: "내용을 입력해주세요."
+                                    }
+                                })} 
+                                type="String"
+                                // value={scheduleItem.content}
+                                // onKeyPress={handleOnKeyPressScheduleInput}
+                                // onChange={onChangeScheduleInput}
+                            />
+                            <button type='submit'>추가</button>
+                        </form>
+                        </ScheduleInputWrapper>
+                    <ErrorMessageDiv><>{errors?.scheduleItem?.message}</></ErrorMessageDiv>
                 </Modal>
             </BoardWrappper>
         </>
