@@ -94,6 +94,18 @@ const DeleteButton = styled.button`
     color: red;
 `;
 
+const DeleteScheduleButton = styled(DeleteButton) `
+    position: absolute;
+    right: 0;
+`
+
+const ScheduleLi = styled.li`
+    position: relative;
+    margin-bottom: 3px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgb(204, 204, 204);
+`
+
 const BoardTitle = styled.h3`
     margin-top: 0px;
 `
@@ -301,6 +313,15 @@ function ToDoList() {
         );
       };
 
+    const onRemoveSchedule = (selectedItem : scheduleProps ) => {
+        setScheduleList(
+            scheduleList.filter(task => {
+                return (task.content != selectedItem.content) || (task.date != selectedItem.date);
+            })
+        );
+    };
+
+
     const getDay = () => { 
 
         const week = ['일', '월', '화', '수', '목', '금', '토'];
@@ -329,7 +350,7 @@ function ToDoList() {
 
         return (
             <TaskItem className={task.isComplished? "complished-item" : ''}>
-                {task.text} 
+                {task.text}  
                 <span>
                     <CompleteButton
                         onClick={() => onComplish(task)}
@@ -344,7 +365,13 @@ function ToDoList() {
 
     const scheduleItemList = selectedDateScheduleList.map((item) => {
         return (
-            <li>{item.content}</li>
+            <ScheduleLi>{item.content}
+            <span>
+            <DeleteScheduleButton
+                onClick={() => onRemoveSchedule(item)}
+            ><MdRemoveCircleOutline/></DeleteScheduleButton>
+            </span>
+            </ScheduleLi>
         );
     });
 
