@@ -237,16 +237,22 @@ function ToDoList() {
     const checkValidation = () => {
         var flag = false;
 
-        if(scheduleItem.content.replace("/^\s+|\s+$/g", "") == "")
-            return false;
-        taskList.forEach((taskItem) => {
-            console.log("taskItem: ", taskItem.text);
-            console.log("newTask: ", newTask.text);
-            if(taskItem.text == newTask.text) {
-                flag = true;
-                return false;
-            }
-        })
+        if(newTask.text.replace(/(\s*)/g, "") == "") {
+            console.log("newTask.text: ", newTask.text);
+            setShowEmptyError(true);
+            return true;
+        } else {
+            taskList.forEach((taskItem) => {
+                console.log("taskItem: ", taskItem.text);
+                if(taskItem.text == newTask.text) {
+                    setShowEmptyError(false);
+                    setShowExistingItemError(true);
+                    flag = true;
+                    return false;
+                }
+            })
+        }
+        
         return flag; 
     };
 
@@ -379,7 +385,7 @@ function ToDoList() {
     return(
         <>
             <Modal className="modal-component" isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
-                {showEmptyError? "내용을 입력하세요." : "해당 항목은 이미 존재합니다."}
+                {ErrorMessage}
                 <ModalButton onClick={onClickCloseModalButton}>
                     <WhiteIoClose/>
                 </ModalButton>
@@ -434,3 +440,6 @@ function ToDoList() {
 }
 
 export default ToDoList;
+
+
+
