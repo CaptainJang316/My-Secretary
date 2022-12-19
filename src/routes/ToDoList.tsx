@@ -143,7 +143,6 @@ const ScheduleBox = styled.div`
 `;
 
 const NoScheduleDiv = styled.div`
-    padding: 35px;
     text-align: center;
 `
 const ErrorMessageDiv = styled.div` 
@@ -414,7 +413,7 @@ function ToDoList() {
                     <ScheduleBox>
                         {scheduleItemList}<br/> 
                         <NoScheduleDiv>
-                            {selectedDateScheduleList.length == 0 ? <>일정이 없습니다.<br/><br/></> : ""}
+                            {selectedDateScheduleList.length == 0 ? <><br/>일정이 없습니다.<br/></> : ""}
                         </NoScheduleDiv>    
                     </ScheduleBox>
                     <ScheduleInputWrapper>
@@ -440,6 +439,4 @@ function ToDoList() {
 }
 
 export default ToDoList;
-
-
 
