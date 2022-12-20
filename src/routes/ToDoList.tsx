@@ -243,7 +243,7 @@ function ToDoList() {
         } else {
             taskList.forEach((taskItem) => {
                 console.log("taskItem: ", taskItem.text);
-                if(taskItem.text == newTask.text) {
+                if(taskItem.text.trim() == newTask.text.trim()) {
                     setShowEmptyError(false);
                     setShowExistingItemError(true);
                     flag = true;
@@ -260,7 +260,7 @@ function ToDoList() {
         var flag = false;
         
         selectedDateScheduleList.forEach((taskItem) => {
-            if(taskItem.content == getValues("content")) {
+            if(taskItem.content.trim() == getValues("content").trim()) {
                 flag = true;
                 return false;
             }
