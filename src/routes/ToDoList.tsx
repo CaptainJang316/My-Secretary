@@ -13,9 +13,6 @@ import { useForm } from "react-hook-form";
 const BoardWrappper = styled.div`
     text-align: center;
     margin: auto;
-    background-color: black;
-    height: 89.5vh;
-    // opacity: 0.2;
 `;
 
 const Board = styled.div`
@@ -62,6 +59,7 @@ const ProgressBar = styled.progress`
 const CustomInput = styled.input`
     box-sizing : border-box;
     width: 80%;
+    line-height: 1.2;
     margin: 5px;
 `
 
