@@ -33,7 +33,7 @@ const Container = styled.div<MenuBarProps>`
     currentMenuItem: ${(props) => props.currentMenuItem};
     // text-align: center;
     border-bottom: 1px solid gray;
-    background-color: black;
+    // background-color: black;
     color: white;
 `;
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import MenuBar from './components/menuBar';
@@ -7,13 +7,25 @@ import ToDoList from './routes/ToDoList';
 import { RecoilRoot } from 'recoil';
 import styled from 'styled-components';
 
+import axios from 'axios';
+
 
 const Wrapper = styled.div`
   height: 100vh;
-  background: black;
+  // background: black;
+  background-image: url('img/backgroundImg.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 `
 
 function App() {
+
+  useEffect(() => {
+    axios.get('/api/test')
+      .then(res => console.log(res))
+      .catch();
+  })
+
   return (
     <RecoilRoot>
       <Wrapper>
