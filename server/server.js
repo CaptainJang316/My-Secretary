@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const db = require('./config/db');
 // const api = require('./src/index');
 // app.use('/api', api);
 

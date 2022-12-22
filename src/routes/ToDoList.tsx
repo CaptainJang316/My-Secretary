@@ -26,6 +26,7 @@ const Board = styled.div`
     background-color: #F0F8FF;
     display: inline-block;
     position: relative;
+    opacity: 0.90;
 `;
 
 const Progress = styled.span`

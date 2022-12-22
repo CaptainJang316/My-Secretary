@@ -13,9 +13,9 @@ import axios from 'axios';
 const Wrapper = styled.div`
   height: 100vh;
   // background: black;
-  background-image: url('img/backgroundImg.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-image: url('img/background.gif');
+  // background-repeat: no-repeat;
+  // background-size: cover;
 `
 
 function App() {
