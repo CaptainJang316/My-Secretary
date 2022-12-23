@@ -33,7 +33,6 @@ function App() {
         <Routes>
           <Route path="/toDoList" element={<ToDoList/>}/>
         </Routes>
-        
       </Wrapper>
     </RecoilRoot>
   );
