@@ -174,7 +174,6 @@ interface scheduleProps {
 
 function ToDoList() {
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
-    // console.log("??: ", formState);
 
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [newTask, setNewTask] = React.useState<toDoItemProps>({text: '', isComplished: false});
@@ -204,13 +203,6 @@ function ToDoList() {
             isComplished: false,
         });
     };
-
-    // const onChangeScheduleInput = (event: any) => {
-    //     setScheduleItem({
-    //         date: Intl.DateTimeFormat('kr').format(selectedDate),
-    //         content: event.target.value,
-    //     });
-    // };
 
 
     const addNewItem = () => {
@@ -283,19 +275,6 @@ function ToDoList() {
             setError("content", { message: "해당 항목은 이미 존재합니다."}); 
         } else addNewSchedule();
     }
-
-    // const handleOnKeyPressScheduleInput = (e: { key: string; }) => {
-    //     if (e.key === 'Enter') {// Enter 입력이 되면 클릭 이벤트 실행
-    //         console.log("엔터키 입력 인식.");
-    //         setScheduleItem({
-    //             date: Intl.DateTimeFormat('kr').format(selectedDate),
-    //             content: getValues("content"),
-    //         });
-
-    //         handleSubmit(onValid);
-    //         console.log("handleSubmit 완료");
-    //     }
-    // };
 
 
     const onComplish = (selectedTask : toDoItemProps) => {
