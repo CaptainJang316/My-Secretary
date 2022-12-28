@@ -14,7 +14,16 @@ const PORT = process.env.PORT || 4000;
 app.use( express.static( path.join(__dirname, '../build') ) );
 
 app.get('*',function(request, response){
-    response.sendFile( path.join(__dirname, '../build/index.html'))
+    db.query('SELECT * FROM dailyToDoList_table', (err, data) => {
+        if(!err) {
+          console.log("response: ", response);
+          response.send({ products : data});
+        } else {
+          console.log("err: ", err);
+          response.send(err);
+        }
+    })
+    // response.sendFile( path.join(__dirname, '../build/index.html'))
   })
 
 app.listen(PORT, () => {
