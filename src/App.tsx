@@ -7,9 +7,6 @@ import ToDoList from './routes/ToDoList';
 import { RecoilRoot } from 'recoil';
 import styled from 'styled-components';
 
-import axios from 'axios';
-
-
 const Wrapper = styled.div`
   height: 100vh;
   // background: black;
@@ -19,12 +16,6 @@ const Wrapper = styled.div`
 `
 
 function App() {
-
-  useEffect(() => {
-    axios.get('/api/test')
-      .then(res => console.log(res))
-      .catch();
-  })
 
   return (
     <RecoilRoot>

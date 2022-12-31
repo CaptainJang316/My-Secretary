@@ -2,8 +2,8 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const db = require('./config/db');
-// const api = require('./src/index');
-// app.use('/api', api);
+const api = require('./routes/index');
+app.use('/api', api);
 
 const PORT = process.env.PORT || 4000;
 
@@ -14,16 +14,16 @@ const PORT = process.env.PORT || 4000;
 app.use( express.static( path.join(__dirname, '../build') ) );
 
 app.get('*',function(request, response){
-    db.query('SELECT * FROM dailyToDoList_table', (err, data) => {
-        if(!err) {
-          console.log("response: ", response);
-          response.send({ products : data});
-        } else {
-          console.log("err: ", err);
-          response.send(err);
-        }
-    })
-    // response.sendFile( path.join(__dirname, '../build/index.html'))
+    // db.query('SELECT * FROM dailyToDoList_table', (err, data) => {
+    //     if(!err) {
+    //       console.log("response: ", response);
+    //       response.send({ products : data});
+    //     } else {
+    //       console.log("err: ", err);
+    //       response.send(err);
+    //     }
+    // })
+    response.sendFile( path.join(__dirname, '../build/index.html'))
   })
 
 app.listen(PORT, () => {

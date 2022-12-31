@@ -9,6 +9,7 @@ import Modal from 'react-modal';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useForm } from "react-hook-form";
+import axios from 'axios';
 
 const BoardWrappper = styled.div`
     text-align: center;
@@ -186,6 +187,34 @@ function ToDoList() {
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
 
+    interface testItemProps {
+        id: number;
+        text: string; 
+        isComplished: number;
+        date: string;
+    };
+    const [test, setTest] = React.useState<testItemProps[]>([]);
+
+    useEffect(() => {
+        (async() => {
+            const res = await axios.get('/api/todolist');
+            console.log("res?!: ", res);
+
+            const _inputData = await res.data.products.map((rowData : testItemProps) => (
+                {
+                    id : rowData.id,
+                    text : rowData.text,
+                    isComplished : rowData.isComplished,
+                    date: rowData.date.toString(),
+                }
+            ));
+            setTest(_inputData);
+        })()
+        // axios.get('/api/test')
+        //   .then(res => console.log("res??: ", res))
+        //   .catch()
+      }, []);
+
     useEffect(() => {
         setSelectedDateScheduleList(
             scheduleList.filter(element => Intl.DateTimeFormat('kr').format(selectedDate) == element.date)
@@ -328,7 +357,8 @@ function ToDoList() {
     console.log();
 
     var complishedItemCount = 0;
-    const menuList = taskList.map((task) => {
+    const menuList = test.map((task) => {
+    // const menuList = taskList.map((task) => {
         if(task.isComplished) complishedItemCount++;
 
         return (
@@ -336,10 +366,10 @@ function ToDoList() {
                 {task.text}  
                 <span>
                     <CompleteButton
-                        onClick={() => onComplish(task)}
+                        // onClick={() => onComplish(task)}
                     ><BsCheckLg/></CompleteButton>
                     <DeleteButton
-                        onClick={() => onRemove(task)}
+                        // onClick={() => onRemove(task)}
                     ><MdRemoveCircleOutline/></DeleteButton>
                 </span>
             </TaskItem>
