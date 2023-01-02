@@ -11,6 +11,7 @@ import 'react-calendar/dist/Calendar.css';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 
+
 const BoardWrappper = styled.div`
     text-align: center;
     margin: auto;
@@ -194,6 +195,7 @@ function ToDoList() {
         date: string;
     };
     const [test, setTest] = React.useState<testItemProps[]>([]);
+    const [reloadData, setReloadData] = React.useState(false);
 
     useEffect(() => {
         (async() => {
@@ -205,15 +207,16 @@ function ToDoList() {
                     id : rowData.id,
                     text : rowData.text,
                     isComplished : rowData.isComplished,
-                    date: rowData.date.toString(),
+                    date: rowData.date.toString().substring(0, 10),
                 }
             ));
+            console.log("_inputData:", _inputData);
             setTest(_inputData);
         })()
         // axios.get('/api/test')
         //   .then(res => console.log("res??: ", res))
         //   .catch()
-      }, []);
+      }, [reloadData]);
 
     useEffect(() => {
         setSelectedDateScheduleList(
@@ -306,14 +309,26 @@ function ToDoList() {
     }
 
 
-    const onComplish = (selectedTask : toDoItemProps) => {
-        const currentTaskList = taskList;
-        currentTaskList.map(task => {
-            if(task.text == selectedTask.text)
-                task.isComplished = !task.isComplished; 
-        });
-        setTaskList([...currentTaskList]);
-        console.log("currentTaskList: ", currentTaskList);
+    const onComplish = (selectedTask : testItemProps) => {
+        // const currentTaskList = taskList;
+
+        const sql = "UPDATE `todolist`.`dailytodolist_table` SET `isComplished` = ? WHERE `id` = ?";
+        const params = selectedTask.isComplished == 0 ? [1, selectedTask.id] : [0, selectedTask.id];
+        
+        axios.post('/api/updateTodolist', {
+            sql: sql,
+            params : params
+          })
+        .then(res => setReloadData(!reloadData))
+        .catch()
+        // currentTaskList.map(task => {
+        //     if(task.text == selectedTask.text)
+        //         task.isComplished = !task.isComplished; 
+        // });
+
+        // setTaskList([...currentTaskList]);
+        //이 시점에서 useEffect 다시 돌릴 변수 setState
+        // console.log("currentTaskList: ", currentTaskList);
     };
 
 
@@ -366,7 +381,7 @@ function ToDoList() {
                 {task.text}  
                 <span>
                     <CompleteButton
-                        // onClick={() => onComplish(task)}
+                        onClick={() => onComplish(task)}
                     ><BsCheckLg/></CompleteButton>
                     <DeleteButton
                         // onClick={() => onRemove(task)}
