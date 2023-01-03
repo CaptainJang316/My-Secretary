@@ -165,9 +165,15 @@ const ScheduleInputWrapper = styled.div`
 
 
 interface toDoItemProps {
+    id: number;
     text: string; 
     isComplished: boolean;
+    date: string;
 };
+
+// interface taskInputProps {
+//     text: string; 
+// };
 
 interface scheduleProps {
     date: string;
@@ -177,8 +183,9 @@ interface scheduleProps {
 function ToDoList() {
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
 
-    const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
-    const [newTask, setNewTask] = React.useState<toDoItemProps>({text: '', isComplished: false});
+    // const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
+    const [newTask, setNewTask] = React.useState<toDoItemProps>();
+    const [taskInputValue, setTaskInputValue] = React.useState("");
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
@@ -187,14 +194,9 @@ function ToDoList() {
     const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
+    const [taskCount, setTaskCount] = React.useState(0);
 
-    interface testItemProps {
-        id: number;
-        text: string; 
-        isComplished: number;
-        date: string;
-    };
-    const [test, setTest] = React.useState<testItemProps[]>([]);
+    const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [reloadData, setReloadData] = React.useState(false);
 
     useEffect(() => {
@@ -202,7 +204,7 @@ function ToDoList() {
             const res = await axios.get('/api/todolist');
             console.log("res?!: ", res);
 
-            const _inputData = await res.data.products.map((rowData : testItemProps) => (
+            const _inputData = await res.data.products.map((rowData : toDoItemProps) => (
                 {
                     id : rowData.id,
                     text : rowData.text,
@@ -210,8 +212,10 @@ function ToDoList() {
                     date: rowData.date.toString().substring(0, 10),
                 }
             ));
-            console.log("_inputData:", _inputData);
-            setTest(_inputData);
+            setTaskCount(res.data.products.length);
+
+            // console.log("_inputData.length:", count);
+            setTaskList(_inputData);
         })()
         // axios.get('/api/test')
         //   .then(res => console.log("res??: ", res))
@@ -229,21 +233,34 @@ function ToDoList() {
                     : showExistingItemError? "해당 항목은 이미 존재합니다." : ""}</>;
     }, [showEmptyError, showExistingItemError]);
 
+
+      
     const onChange = (event: any) => {
-        setNewTask({
-            text: event.target.value,
-            isComplished: false,
-        });
+        setTaskInputValue(event.target.value);
     };
 
+    var currentDate = new Date().toString().substring(0, 10);
 
-    const addNewItem = () => {
-        setTaskList([...taskList, newTask]);
-        setNewTask({
-            text: '',
-            isComplished: false,
-        });
-        console.log(taskList);
+    const getDate = () => {
+        const date = new Date();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+        let mm = month >= 10 ? month : '0' + month;
+        let dd = day >= 10 ? day : '0' + day;
+
+        return date.getFullYear() + '-' + mm + '-' + dd;
+    }
+
+    const addNewItem = async () => {
+        const currentDate = await getDate();
+        
+        const params = [taskCount+1, taskInputValue, false, currentDate];
+        axios.post('/api/addNewTask', {
+            params : params
+          })
+        .then(res => setReloadData(!reloadData))
+        .catch();
     };
 
     const addNewSchedule = () => {
@@ -259,14 +276,14 @@ function ToDoList() {
     const checkValidation = () => {
         var flag = false;
 
-        if(newTask.text.replace(/(\s*)/g, "") == "") {
-            console.log("newTask.text: ", newTask.text);
+        if(taskInputValue.replace(/(\s*)/g, "") == "") {
+            console.log("newTask.text: ", taskInputValue);
             setShowEmptyError(true);
             return true;
         } else {
             taskList.forEach((taskItem) => {
                 console.log("taskItem: ", taskItem.text);
-                if(taskItem.text.trim() == newTask.text.trim()) {
+                if(taskItem.text.trim() == taskInputValue.trim()) {
                     setShowEmptyError(false);
                     setShowExistingItemError(true);
                     flag = true;
@@ -309,14 +326,12 @@ function ToDoList() {
     }
 
 
-    const onComplish = (selectedTask : testItemProps) => {
+    const onComplish = (selectedTask : toDoItemProps) => {
         // const currentTaskList = taskList;
 
-        const sql = "UPDATE `todolist`.`dailytodolist_table` SET `isComplished` = ? WHERE `id` = ?";
-        const params = selectedTask.isComplished == 0 ? [1, selectedTask.id] : [0, selectedTask.id];
+        const params = selectedTask.isComplished == false ? [true, selectedTask.id] : [false, selectedTask.id];
         
-        axios.post('/api/updateTodolist', {
-            sql: sql,
+        axios.post('/api/toggleIsComplishTask', {
             params : params
           })
         .then(res => setReloadData(!reloadData))
@@ -368,11 +383,9 @@ function ToDoList() {
         setIsCalendarModalOpen(true);
     }
     
-    
-    console.log();
 
     var complishedItemCount = 0;
-    const menuList = test.map((task) => {
+    const menuList = taskList.map((task) => {
     // const menuList = taskList.map((task) => {
         if(task.isComplished) complishedItemCount++;
 
@@ -417,7 +430,7 @@ function ToDoList() {
                     <BoardTitle>{getDay()} - ToDoList</BoardTitle>
                     new: <CustomInput 
                         type="String"
-                        value={newTask.text}
+                        value={taskInputValue}
                         onKeyPress={handleOnKeyPress}
                         onChange={onChange}
                         />

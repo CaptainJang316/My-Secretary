@@ -17,12 +17,27 @@ app.get('/todolist', (req,res) => {
     })
 })
 
-app.post('/updateTodolist', (req,res) => {
+app.post('/toggleIsComplishTask', (req,res) => {
 
   console.log("+++++++++++++++++++++++++++++++++++++++++++++++++");
   console.log("req: ", req);
 
-  db.query(req.body.sql, req.body.params, (err, data) => {
+  const sql = "UPDATE `todolist`.`dailytodolist_table` SET `isComplished` = ? WHERE `id` = ?";
+
+  db.query(sql, req.body.params, (err, data) => {
+    if(!err) {
+        res.send(data)
+    } else {
+        res.send(err)
+    }});
+})
+
+
+app.post('/addNewTask', (req,res) => {
+
+  const sql = "INSERT INTO `todolist`.`dailytodolist_table` (`id`, `text`, `isComplished`, `date`) VALUES (?, ?, ?, ?)";
+
+  db.query(sql, req.body.params, (err, data) => {
     if(!err) {
         res.send(data)
     } else {
