@@ -204,7 +204,7 @@ function ToDoList() {
             const res = await axios.get('/api/todolist');
             console.log("res?!: ", res);
 
-            const _inputData = await res.data.products.map((rowData : toDoItemProps) => (
+            const toDoListData = await res.data.products.map((rowData : toDoItemProps) => (
                 {
                     id : rowData.id,
                     text : rowData.text,
@@ -214,12 +214,8 @@ function ToDoList() {
             ));
             setTaskCount(res.data.products.length);
 
-            // console.log("_inputData.length:", count);
-            setTaskList(_inputData);
+            setTaskList(toDoListData);
         })()
-        // axios.get('/api/test')
-        //   .then(res => console.log("res??: ", res))
-        //   .catch()
       }, [reloadData]);
 
     useEffect(() => {
@@ -254,7 +250,7 @@ function ToDoList() {
 
     const addNewItem = async () => {
         const currentDate = await getDate();
-        
+
         const params = [taskCount+1, taskInputValue, false, currentDate];
         axios.post('/api/addNewTask', {
             params : params
@@ -336,24 +332,23 @@ function ToDoList() {
           })
         .then(res => setReloadData(!reloadData))
         .catch()
-        // currentTaskList.map(task => {
-        //     if(task.text == selectedTask.text)
-        //         task.isComplished = !task.isComplished; 
-        // });
-
-        // setTaskList([...currentTaskList]);
-        //이 시점에서 useEffect 다시 돌릴 변수 setState
-        // console.log("currentTaskList: ", currentTaskList);
     };
 
 
     const onRemove = (selectedTask : toDoItemProps) => {
-        setTaskList(
-            taskList.filter(task => {
-            return task.text !== selectedTask.text;
-          })
-        );
-      };
+
+        axios.post('/api/deleteTask', {
+            params: selectedTask.id
+        }).then(res => setReloadData(!reloadData))
+        .catch();
+
+        // setTaskList(
+        //     taskList.filter(task => {
+        //     return task.text !== selectedTask.text;
+        //   })
+        // );
+    };
+
 
     const onRemoveSchedule = (selectedItem : scheduleProps ) => {
         setScheduleList(
@@ -397,7 +392,7 @@ function ToDoList() {
                         onClick={() => onComplish(task)}
                     ><BsCheckLg/></CompleteButton>
                     <DeleteButton
-                        // onClick={() => onRemove(task)}
+                        onClick={() => onRemove(task)}
                     ><MdRemoveCircleOutline/></DeleteButton>
                 </span>
             </TaskItem>

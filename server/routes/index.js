@@ -45,5 +45,19 @@ app.post('/addNewTask', (req,res) => {
     }});
 })
 
+
+app.post('/deleteTask', (req,res) => {
+
+  const sql = "DELETE FROM `todolist`.`dailytodolist_table` WHERE `id` = ?";
+
+  db.query(sql, req.body.params, (err, data) => {
+    if(!err) {
+        res.send(data)
+    } else {
+        res.send(err)
+    }});
+})
+
+
  
 module.exports = app;
