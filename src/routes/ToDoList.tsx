@@ -262,26 +262,16 @@ function ToDoList() {
             console.log("currentDate: ", currentDate);
             const res = await axios.get(`/api/todolist/${currentDate}`);
             console.log("res?!: ", res);
-            setYesterdayFlag(false);
-            setTomorrowFlag(false);
             const selectedDate = new Date(currentDate);
 
-            const toDoListData = await res.data.products.map(function(rowData : toDoItemProps) {
-                const DateOfCurrentData = new Date(rowData.date);
-                if(!yesterdayFlag && DateOfCurrentData < selectedDate) {
-                    setYesterdayFlag(true);
-                }
-                else if(!tomorrowFlag && selectedDate < DateOfCurrentData) {
-                    setTomorrowFlag(true);
-                }
-
-                return {
+            const toDoListData = await res.data.products.map((rowData : toDoItemProps) => (
+                {
                     id : rowData.id,
                     text : rowData.text,
                     isComplished : rowData.isComplished,
                     date: rowData.date,
                 }
-            });
+            ));
             setTaskCount(res.data.products.length);
 
             setTaskList(toDoListData);
