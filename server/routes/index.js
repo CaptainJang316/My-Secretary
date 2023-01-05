@@ -46,7 +46,7 @@ app.post('/toggleIsComplishTask', (req,res) => {
 
 app.post('/addNewTask', (req,res) => {
 
-  const sql = "INSERT INTO `todolist`.`dailytodolist_table` (`id`, `text`, `isComplished`, `date`) VALUES (?, ?, ?, ?)";
+  const sql = "INSERT INTO `todolist`.`dailytodolist_table` (`text`, `isComplished`, `date`) VALUES (?, ?, ?)";
 
   db.query(sql, req.body.params, (err, data) => {
     if(!err) {

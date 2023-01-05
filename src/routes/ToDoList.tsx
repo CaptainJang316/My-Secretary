@@ -65,10 +65,12 @@ const CustomInput = styled.input`
     width: 80%;
     line-height: 1.2;
     margin: 5px;
+    background: black;
+    color: white;
 `
 
 const TaskItem = styled.span`
-    border-bottom: solid 1px white;
+    border-bottom: solid 1px lavender;
     padding-bottom: 5px;
     padding-top: 12px;
     display: flex;
@@ -273,7 +275,6 @@ function ToDoList() {
                     date: rowData.date,
                 }
             ));
-            setTaskCount(res.data.products.length);
 
             setTaskList(toDoListData);
         })()
@@ -297,7 +298,7 @@ function ToDoList() {
     };
 
     const addNewItem = () => {
-        const params = [taskCount+1, taskInputValue, false, currentDate];
+        const params = [taskInputValue, false, currentDate];
         axios.post('/api/addNewTask', {
             params : params
           })
