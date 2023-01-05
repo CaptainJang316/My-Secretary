@@ -2,6 +2,7 @@ import React, { useEffect, memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { BsCheckLg } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
+import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 import { MdRemoveCircleOutline } from "react-icons/md";
 import { text } from 'node:stream/consumers';
 import { selector } from 'recoil';
@@ -109,6 +110,7 @@ const ScheduleLi = styled.li`
 
 const BoardTitle = styled.h3`
     margin-top: 0px;
+    position: relative;
 `
 
 const ModalButton = styled.button`
@@ -163,6 +165,20 @@ const ScheduleInputWrapper = styled.div`
     width: 96.2%;
 `
 
+const CustomIoMdArrowDropleft = styled(IoMdArrowDropleft)`  
+    position: absolute;
+    left: 6px;
+    top: -3px;
+    font-size: 2rem;
+`;
+const CustomIoMdArrowDropright = styled(IoMdArrowDropright)`
+    position: absolute;
+    right: 6px;
+    top: -3px;
+    font-size: 2rem;
+`;
+
+
 
 interface toDoItemProps {
     id: number;
@@ -198,25 +214,79 @@ function ToDoList() {
 
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [reloadData, setReloadData] = React.useState(false);
+    const [yesterdayFlag, setYesterdayFlag] = React.useState(false);
+    const [tomorrowFlag, setTomorrowFlag] = React.useState(false);
+    const [currentDate, setCurrentDate] = React.useState("");
+
+    const getCurrentDate = (dateData = new Date) => {
+        const date = dateData;
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+        let mm = month >= 10 ? month : '0' + month;
+        let dd = day >= 10 ? day : '0' + day;
+
+        return date.getFullYear() + '-' + mm + '-' + dd;
+    }
+
+    useEffect(() => {
+        const today = getCurrentDate();
+        setCurrentDate(today);
+        // console.log("today: ", currentDate);
+    }, [])
 
     useEffect(() => {
         (async() => {
-            const res = await axios.get('/api/todolist');
-            console.log("res?!: ", res);
+            const res = await axios.get('/api/getDateData');
 
-            const toDoListData = await res.data.products.map((rowData : toDoItemProps) => (
-                {
+            console.log("currentDate:@?: ", currentDate);
+            const selectedDate = new Date(currentDate);
+            const today = new Date();
+
+            await res.data.products.map(function(date : any) {
+                const DateOfCurrentData = new Date(date.date);
+                if(!yesterdayFlag && DateOfCurrentData < selectedDate) {
+                    setYesterdayFlag(true);
+                    console.log("yesterdayFlag: ",yesterdayFlag);
+                }
+                else if(!tomorrowFlag && selectedDate < today) {
+                    setTomorrowFlag(true);
+                    console.log("tomorrowFlag: ",tomorrowFlag);
+                }
+            });
+        })()
+    }, [currentDate]);
+
+    useEffect(() => {
+        (async() => {
+            console.log("currentDate: ", currentDate);
+            const res = await axios.get(`/api/todolist/${currentDate}`);
+            console.log("res?!: ", res);
+            setYesterdayFlag(false);
+            setTomorrowFlag(false);
+            const selectedDate = new Date(currentDate);
+
+            const toDoListData = await res.data.products.map(function(rowData : toDoItemProps) {
+                const DateOfCurrentData = new Date(rowData.date);
+                if(!yesterdayFlag && DateOfCurrentData < selectedDate) {
+                    setYesterdayFlag(true);
+                }
+                else if(!tomorrowFlag && selectedDate < DateOfCurrentData) {
+                    setTomorrowFlag(true);
+                }
+
+                return {
                     id : rowData.id,
                     text : rowData.text,
                     isComplished : rowData.isComplished,
-                    date: rowData.date.toString().substring(0, 10),
+                    date: rowData.date,
                 }
-            ));
+            });
             setTaskCount(res.data.products.length);
 
             setTaskList(toDoListData);
         })()
-      }, [reloadData]);
+      }, [reloadData, currentDate]);
 
     useEffect(() => {
         setSelectedDateScheduleList(
@@ -235,22 +305,7 @@ function ToDoList() {
         setTaskInputValue(event.target.value);
     };
 
-    var currentDate = new Date().toString().substring(0, 10);
-
-    const getDate = () => {
-        const date = new Date();
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-
-        let mm = month >= 10 ? month : '0' + month;
-        let dd = day >= 10 ? day : '0' + day;
-
-        return date.getFullYear() + '-' + mm + '-' + dd;
-    }
-
-    const addNewItem = async () => {
-        const currentDate = await getDate();
-
+    const addNewItem = () => {
         const params = [taskCount+1, taskInputValue, false, currentDate];
         axios.post('/api/addNewTask', {
             params : params
@@ -258,6 +313,23 @@ function ToDoList() {
         .then(res => setReloadData(!reloadData))
         .catch();
     };
+
+
+    const getYesterDayData = () => {
+        let date = new Date(currentDate);
+        date.setDate(date.getDate() - 1);
+        const result = getCurrentDate(date);    
+        setCurrentDate(result);
+        setYesterdayFlag(false);
+    };
+    const getTomorrowData = () => {
+        let date = new Date(currentDate);
+        date.setDate(date.getDate() + 1);
+        const result = getCurrentDate(date); 
+        setCurrentDate(result)
+        setTomorrowFlag(false);
+    };
+
 
     const addNewSchedule = () => {
         console.log("watch?: ", watch());
@@ -362,8 +434,8 @@ function ToDoList() {
     const getDay = () => { 
 
         const week = ['일', '월', '화', '수', '목', '금', '토'];
-        const dayOfWeek = week[new Date().getDay()];
-        var date = new Date();
+        const dayOfWeek = week[new Date(currentDate).getDay()];
+        var date = new Date(currentDate);
         const getDay = date.getMonth()+1 + "/" + date.getDate() + "(" + dayOfWeek + ")";
 
         return getDay;
@@ -422,7 +494,15 @@ function ToDoList() {
             </Modal>
             <BoardWrappper>
                 <Board>
-                    <BoardTitle>{getDay()} - ToDoList</BoardTitle>
+                    <BoardTitle>
+                        {yesterdayFlag? <CustomIoMdArrowDropleft
+                            onClick={getYesterDayData}
+                        /> : <></>}
+                        {getDay()} - ToDoList
+                        {tomorrowFlag? <CustomIoMdArrowDropright
+                            onClick={getTomorrowData}
+                        /> : <></>}
+                    </BoardTitle>
                     new: <CustomInput 
                         type="String"
                         value={taskInputValue}

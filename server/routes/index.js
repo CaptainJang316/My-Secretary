@@ -5,10 +5,11 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
  
-app.get('/todolist', (req,res) => {
-    db.query('SELECT * FROM dailyToDoList_table', (err, data) => {
+app.get('/todolist/:date', (req, res) => {
+    console.log("req.params.date: ", req.params.date);
+    console.log("req.params: ", req.params);
+    db.query('SELECT * FROM dailyToDoList_table WHERE `date` = ?', req.params.date, (err, data) => {
         if(!err) {
-          console.log("response: ", res);
           res.send({ products : data});
         } else {
           console.log("err: ", err);
@@ -17,10 +18,20 @@ app.get('/todolist', (req,res) => {
     })
 })
 
+app.get('/getDateData', (req, res) => {
+  db.query('SELECT date FROM dailyToDoList_table', (err, data) => {
+      if(!err) {
+        res.send({ products : data});
+      } else {
+        res.send(err);
+      }
+  })
+})
+
 app.post('/toggleIsComplishTask', (req,res) => {
 
   console.log("+++++++++++++++++++++++++++++++++++++++++++++++++");
-  console.log("req: ", req);
+  // console.log("req: ", req);
 
   const sql = "UPDATE `todolist`.`dailytodolist_table` SET `isComplished` = ? WHERE `id` = ?";
 
