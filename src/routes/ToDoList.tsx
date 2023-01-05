@@ -249,7 +249,9 @@ function ToDoList() {
                     setYesterdayFlag(true);
                     console.log("yesterdayFlag: ",yesterdayFlag);
                 }
-                else if(!tomorrowFlag && selectedDate < today) {
+                if(!tomorrowFlag && selectedDate < today) {
+                    console.log("selectedDate: ",selectedDate);
+                    console.log("today: ",today);
                     setTomorrowFlag(true);
                     console.log("tomorrowFlag: ",tomorrowFlag);
                 }
@@ -262,9 +264,8 @@ function ToDoList() {
             console.log("currentDate: ", currentDate);
             const res = await axios.get(`/api/todolist/${currentDate}`);
             console.log("res?!: ", res);
-            const selectedDate = new Date(currentDate);
 
-            const toDoListData = await res.data.products.map((rowData : toDoItemProps) => (
+            const toDoListData = await res.data.products && res.data.products.map((rowData : toDoItemProps) => (
                 {
                     id : rowData.id,
                     text : rowData.text,
