@@ -444,7 +444,7 @@ function ToDoList() {
     
 
     var complishedItemCount = 0;
-    const menuList = taskList.map((task) => {
+    const toDoList = taskList && taskList.map((task) => {
     // const menuList = taskList.map((task) => {
         if(task.isComplished) complishedItemCount++;
 
@@ -501,9 +501,9 @@ function ToDoList() {
                         onKeyPress={handleOnKeyPress}
                         onChange={onChange}
                         />
-                    {menuList}
-                    <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>
-                    <ProgressBar value={(complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
+                    {toDoList}
+                    {taskList == undefined? "" : <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>}
+                    <ProgressBar value={taskList == undefined? 0 : (complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
                 </Board>
                 <div>
                     <CalendarButton onClick={onClickCalendarButton}>일정</CalendarButton>
