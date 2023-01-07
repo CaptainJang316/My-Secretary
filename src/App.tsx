@@ -7,11 +7,11 @@ import ToDoList from './routes/ToDoList';
 import { RecoilRoot } from 'recoil';
 import styled from 'styled-components';
 
+
 const Wrapper = styled.div`
   height: 100vh;
-  // background: black;
   background-image: url('img/background.gif');
-  // background-repeat: no-repeat;
+  background-repeat: round;
   // background-size: cover;
 `
 
@@ -24,7 +24,7 @@ function App() {
         <Routes>
           <Route path="/toDoList" element={<ToDoList/>}/>
         </Routes>
-      </Wrapper>
+      </Wrapper>      
     </RecoilRoot>
   );
 }

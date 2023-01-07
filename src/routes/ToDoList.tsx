@@ -302,7 +302,10 @@ function ToDoList() {
         axios.post('/api/addNewTask', {
             params : params
           })
-        .then(res => setReloadData(!reloadData))
+        .then(res => {
+            setReloadData(!reloadData);
+            setTaskInputValue("");
+        })
         .catch();
     };
 
