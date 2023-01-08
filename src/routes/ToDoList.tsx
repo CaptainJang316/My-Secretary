@@ -280,6 +280,28 @@ function ToDoList() {
         })()
       }, [reloadData, currentDate]);
 
+    
+    interface ScheduleTestProps {
+        id: string,
+        text: string,
+        date: string,
+    }
+    const [scheduleTest, setScheduleTest] = React.useState<ScheduleTestProps[]>([]);
+    const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
+    useEffect(() => {
+        axios.get(`/api/scheduleList/${selectedDate}`)
+        .then(async (res) => {
+            const scheduleListData = await res.data.products && res.data.products.map((rowData : ScheduleTestProps) => (
+                {
+                    id : rowData.id,
+                    text : rowData.text,
+                    date: rowData.date,
+                }
+            ));
+            setScheduleTest(scheduleListData);
+        });
+    }, [reloadScheduleData])
+
     useEffect(() => {
         setSelectedDateScheduleList(
             scheduleList.filter(element => Intl.DateTimeFormat('kr').format(selectedDate) == element.date)
@@ -442,7 +464,8 @@ function ToDoList() {
     }
 
     const onClickCalendarButton = () => {
-        setIsCalendarModalOpen(true);
+        setReloadScheduleData(!reloadScheduleData);
+        setIsCalendarModalOpen(true)
     }
     
 
@@ -466,12 +489,13 @@ function ToDoList() {
             );
     })
 
-    const scheduleItemList = selectedDateScheduleList.map((item) => {
+    // const scheduleItemList = selectedDateScheduleList.map((item) => {
+    const scheduleItemList = scheduleTest.map((item) => {
         return (
-            <ScheduleLi>{item.content}
+            <ScheduleLi>{item.text}
             <span>
             <DeleteScheduleButton
-                onClick={() => onRemoveSchedule(item)}
+                // onClick={() => onRemoveSchedule(item)}
             ><MdRemoveCircleOutline/></DeleteScheduleButton>
             </span>
             </ScheduleLi>

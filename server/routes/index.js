@@ -70,5 +70,19 @@ app.post('/deleteTask', (req,res) => {
 })
 
 
+
+app.get('/scheduleList/:date', (req, res) => {
+  console.log("scheduleList -> req.params.date: ", req.params.date);
+  console.log("scheduleList -> req.params: ", req.params);
+  db.query('SELECT * FROM schedule_table WHERE `date` = ?', req.params.date, (err, data) => {
+      if(!err) {
+        res.send({ products : data});
+      } else {
+        console.log("err: ", err);
+        res.send(err);
+      }
+  })
+})
+
  
 module.exports = app;
