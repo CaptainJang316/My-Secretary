@@ -70,7 +70,7 @@ const CustomInput = styled.input`
 `
 const CalendarInput = styled.input`
     box-sizing : border-box; 
-    width: 79%;
+    width: 80.5%;
     line-height: 1.2;
     margin-left: 8px;
     margin-right: 3px;
@@ -151,7 +151,7 @@ const ScheduleBox = styled.div`
     margin-top: 10px;
     // margin-bottom: 20px;
     border: 1px solid #a0a096;
-    height: 155px;
+    height: 122px;
     padding: 10px;
     overflow: auto;
 `;
@@ -165,15 +165,15 @@ const ErrorMessageDiv = styled.div`
     color: red;
     font-size: 0.8rem;
     position: absolute;
-    bottom: 5px;
+    bottom: 4px;
     left: 10px;
 `
 
 const ScheduleInputWrapper = styled.div`
     position: absolute;
-    bottom: 20px;
-    left: 15px;
-    width: 96.2%;
+    bottom: 22px;
+    left: 12px;
+    width: 97%;
 `
 
 const CustomIoMdArrowDropleft = styled(IoMdArrowDropleft)`  
