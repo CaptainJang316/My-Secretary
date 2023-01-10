@@ -68,6 +68,15 @@ const CustomInput = styled.input`
     background: black;
     color: white;
 `
+const CalendarInput = styled.input`
+    box-sizing : border-box; 
+    width: 79%;
+    line-height: 1.2;
+    margin-left: 8px;
+    margin-right: 3px;
+    background: black;
+    color: white;
+`
 
 const TaskItem = styled.span`
     border-bottom: solid 1px lavender;
@@ -208,7 +217,7 @@ function ToDoList() {
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
     const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>();
-    const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
+    // const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
@@ -286,7 +295,7 @@ function ToDoList() {
         text: string,
         date: string,
     }
-    const [scheduleTest, setScheduleTest] = React.useState<scheduleProps[]>([]);
+    const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     useEffect(() => {
         const date = getCurrentDate(selectedDate);
@@ -299,7 +308,7 @@ function ToDoList() {
                     date: rowData.date,
                 }
             ));
-            setScheduleTest(scheduleListData);
+            setScheduleList(scheduleListData);
         });
     }, [reloadScheduleData])
 
@@ -349,15 +358,44 @@ function ToDoList() {
     };
 
 
-    // const addNewSchedule = () => {
-    //     console.log("watch?: ", watch());
-    //     setScheduleList ([...scheduleList, {
-    //         date: getValues("date"),
-    //         content: getValues("content"),
-    //     }]);
-    //     console.log("scheduleList?@: ", scheduleList);
-    //     setValue("content", '');
-    // };
+    const onValid = (data: any) => {
+        console.log("onValid 진입");
+        // setValue("date", Intl.DateTimeFormat('kr').format(selectedDate));
+        setValue('date', getCurrentDate(selectedDate))
+        if(checkExistingScheduleItem()) {
+            setError("text", { message: "해당 항목은 이미 존재합니다."}); 
+        } 
+        else addNewSchedule();
+    }
+
+    const checkExistingScheduleItem = () => {
+        var flag = false;
+        
+        scheduleList.forEach((taskItem) => {
+            if(taskItem.text.trim() == getValues("text").trim()) {
+                flag = true;
+                return false;
+            }
+        })
+        return flag;
+    };
+
+    const addNewSchedule = () => {
+        console.log("watch?: ", watch());
+        // setScheduleList ([...scheduleList, {
+        //     date: getValues("date"),
+        //     content: getValues("content"),
+        // }]);
+        const text = getValues('text');
+        const date = getValues('date');
+        const params = [text, date];
+        axios.post("/api/addNewScheduleItem", {
+            params: params
+        }).then(() => {
+            setValue("text", '');
+            setReloadScheduleData(!reloadScheduleData);
+        })
+    };
 
     const checkValidation = () => {
         var flag = false;
@@ -381,18 +419,6 @@ function ToDoList() {
         return flag; 
     };
 
-
-    const checkExistingScheduleItem = () => {
-        var flag = false;
-        
-        selectedDateScheduleList.forEach((taskItem) => {
-            if(taskItem.text.trim() == getValues("text").trim()) {
-                flag = true;
-                return false;
-            }
-        })
-        return flag;
-    };
         
     const handleOnKeyPress = (e: { key: string; }) => {
         if (e.key === 'Enter') {// Enter 입력이 되면 클릭 이벤트 실행
@@ -402,15 +428,6 @@ function ToDoList() {
             else setIsModalOpen(true);
         }
     };
-
-    const onValid = (data: any) => {
-        console.log("onValid 진입");
-        setValue("date", Intl.DateTimeFormat('kr').format(selectedDate));
-        if(checkExistingScheduleItem()) {
-            setError("text", { message: "해당 항목은 이미 존재합니다."}); 
-        } 
-        // else addNewSchedule();
-    }
 
 
     const onComplish = (selectedTask : toDoItemProps) => {
@@ -502,7 +519,7 @@ function ToDoList() {
     })
 
     // const scheduleItemList = selectedDateScheduleList.map((item) => {
-    const scheduleItemList = scheduleTest.map((item) => {
+    const scheduleItemList = scheduleList.map((item) => {
         return (
             <ScheduleLi>{item.text}
             <span>
@@ -555,12 +572,12 @@ function ToDoList() {
                     <ScheduleBox>
                         {scheduleItemList}<br/> 
                         <NoScheduleDiv>
-                            {selectedDateScheduleList.length == 0 ? <><br/>일정이 없습니다.<br/></> : ""}
+                            {scheduleList.length == 0 ? <><br/>일정이 없습니다.<br/></> : ""}
                         </NoScheduleDiv>    
                     </ScheduleBox>
                     <ScheduleInputWrapper>
                         <form onSubmit={handleSubmit(onValid)}>
-                            <CustomInput
+                            <CalendarInput
                                 {...register("text", {
                                     required: "내용을 입력해주세요.",
                                     pattern: {

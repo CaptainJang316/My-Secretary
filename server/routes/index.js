@@ -84,6 +84,17 @@ app.get('/scheduleList/:date', (req, res) => {
   })
 })
 
+app.post('/addNewScheduleItem', (req, res) => {
+  const sql = "INSERT INTO schedule_table (`text`, `date`) VALUES (?, ?)";
+
+  db.query(sql, req.body.params, (err, data) => {
+    if(!err) {
+        res.send(data)
+    } else {
+        res.send(err)
+    }});
+})
+
 app.post('/deleteScheduleItem', (req, res) => {
   const sql = "DELETE FROM schedule_table WHERE `id` = ?";
 
