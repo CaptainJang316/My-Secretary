@@ -216,12 +216,12 @@ function ToDoList() {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
-    const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>();
+    // const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>();
     // const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
-    const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
+    // const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
-    const [taskCount, setTaskCount] = React.useState(0);
+    // const [taskCount, setTaskCount] = React.useState(0);
 
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [reloadData, setReloadData] = React.useState(false);
@@ -250,7 +250,6 @@ function ToDoList() {
         (async() => {
             const res = await axios.get('/api/getDateData');
 
-            console.log("currentDate:@?: ", currentDate);
             const selectedDate = new Date(currentDate);
             const today = new Date();
 
@@ -258,13 +257,9 @@ function ToDoList() {
                 const DateOfCurrentData = new Date(date.date);
                 if(!yesterdayFlag && DateOfCurrentData < selectedDate) {
                     setYesterdayFlag(true);
-                    console.log("yesterdayFlag: ",yesterdayFlag);
                 }
                 if(!tomorrowFlag && selectedDate < today) {
-                    console.log("selectedDate: ",selectedDate);
-                    console.log("today: ",today);
                     setTomorrowFlag(true);
-                    console.log("tomorrowFlag: ",tomorrowFlag);
                 }
             });
         })()
@@ -272,9 +267,7 @@ function ToDoList() {
 
     useEffect(() => {
         (async() => {
-            console.log("currentDate: ", currentDate);
             const res = await axios.get(`/api/todolist/${currentDate}`);
-            console.log("res?!: ", res);
 
             const toDoListData = await res.data.products && res.data.products.map((rowData : toDoItemProps) => (
                 {
@@ -359,7 +352,6 @@ function ToDoList() {
 
 
     const onValid = (data: any) => {
-        console.log("onValid 진입");
         // setValue("date", Intl.DateTimeFormat('kr').format(selectedDate));
         setValue('date', getCurrentDate(selectedDate))
         if(checkExistingScheduleItem()) {
@@ -401,12 +393,10 @@ function ToDoList() {
         var flag = false;
 
         if(taskInputValue.replace(/(\s*)/g, "") == "") {
-            console.log("newTask.text: ", taskInputValue);
             setShowEmptyError(true);
             return true;
         } else {
             taskList.forEach((taskItem) => {
-                console.log("taskItem: ", taskItem.text);
                 if(taskItem.text.trim() == taskInputValue.trim()) {
                     setShowEmptyError(false);
                     setShowExistingItemError(true);
@@ -493,7 +483,6 @@ function ToDoList() {
 
     const changeCalendarDate = (changedValue: any) => {
         setSelectedDate(changedValue);
-        console.log("selectedDate????????: ", changedValue);
         setReloadScheduleData(!reloadScheduleData);
     }
     
