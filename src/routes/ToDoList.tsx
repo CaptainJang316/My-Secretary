@@ -11,6 +11,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
+import CSSTransition from 'react-transition-group/CSSTransition';
 
 
 const BoardWrappper = styled.div`
@@ -143,8 +144,13 @@ const WhiteIoClose = styled(IoClose)`
     color: white;
 `;
 
-const CalendarButton = styled.button`
-    margin-left: 220px;
+const BottomButtonListWrapper = styled.div`
+    display: inline-block;
+    text-align: end;
+`
+
+const BottomButton = styled.button`
+    margin-left: 10px;
 `
 
 const ScheduleBox = styled.div`
@@ -198,36 +204,32 @@ interface toDoItemProps {
     date: string;
 };
 
-// interface taskInputProps {
-//     text: string; 
-// };
-
-// interface scheduleProps {
-//     date: string;
-//     content: string;
-// }
+interface scheduleProps {
+    id: string,
+    text: string,
+    date: string,
+}
 
 function ToDoList() {
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
 
-    // const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [newTask, setNewTask] = React.useState<toDoItemProps>();
     const [taskInputValue, setTaskInputValue] = React.useState("");
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
-    // const [scheduleItem, setScheduleItem] = React.useState<scheduleProps>();
-    // const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
-    // const [selectedDateScheduleList, setSelectedDateScheduleList] = React.useState<scheduleProps[]>([]);
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
-    // const [taskCount, setTaskCount] = React.useState(0);
+
 
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [reloadData, setReloadData] = React.useState(false);
     const [yesterdayFlag, setYesterdayFlag] = React.useState(false);
     const [tomorrowFlag, setTomorrowFlag] = React.useState(false);
     const [currentDate, setCurrentDate] = React.useState("");
+    const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
+    const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
+    const [openFeedBackBoard, setOpenFeedBackBoard] = React.useState(false);
 
     const getCurrentDate = (dateData = new Date) => {
         const date = dateData;
@@ -243,7 +245,6 @@ function ToDoList() {
     useEffect(() => {
         const today = getCurrentDate();
         setCurrentDate(today);
-        // console.log("today: ", currentDate);
     }, [])
 
     useEffect(() => {
@@ -283,13 +284,6 @@ function ToDoList() {
       }, [reloadData, currentDate]);
 
     
-    interface scheduleProps {
-        id: string,
-        text: string,
-        date: string,
-    }
-    const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
-    const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     useEffect(() => {
         const date = getCurrentDate(selectedDate);
         axios.get(`/api/scheduleList/${date}`)
@@ -304,6 +298,10 @@ function ToDoList() {
             setScheduleList(scheduleListData);
         });
     }, [reloadScheduleData])
+
+    useEffect(() => {
+
+    }, [openFeedBackBoard])
 
     // useEffect(() => {
     //     setSelectedDateScheduleList(
@@ -481,6 +479,10 @@ function ToDoList() {
         setIsCalendarModalOpen(true)
     }
 
+    const onClickFeedbackButton = () => {
+        setOpenFeedBackBoard(true);
+    }
+
     const changeCalendarDate = (changedValue: any) => {
         setSelectedDate(changedValue);
         setReloadScheduleData(!reloadScheduleData);
@@ -489,7 +491,6 @@ function ToDoList() {
 
     var complishedItemCount = 0;
     const toDoList = taskList && taskList.map((task) => {
-    // const menuList = taskList.map((task) => {
         if(task.isComplished) complishedItemCount++;
 
         return (
@@ -507,7 +508,7 @@ function ToDoList() {
             );
     })
 
-    // const scheduleItemList = selectedDateScheduleList.map((item) => {
+
     const scheduleItemList = scheduleList.map((item) => {
         return (
             <ScheduleLi>{item.text}
@@ -551,7 +552,10 @@ function ToDoList() {
                     <ProgressBar value={taskList == undefined? 0 : (complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
                 </Board>
                 <div>
-                    <CalendarButton onClick={onClickCalendarButton}>일정</CalendarButton>
+                    <BottomButtonListWrapper>
+                        <BottomButton onClick={onClickCalendarButton}>피드백</BottomButton>
+                        <BottomButton onClick={onClickCalendarButton}>일정</BottomButton>
+                    </BottomButtonListWrapper>
                 </div>
                 <Modal className="calendar-modal-component" isOpen={isCalendarModalOpen} onRequestClose={() => setIsCalendarModalOpen(false)}>
                     <Calendar className="calendar" value={selectedDate} onChange={changeCalendarDate}/>
