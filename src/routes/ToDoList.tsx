@@ -89,8 +89,6 @@ const TaskItem = styled.span`
 `;
 
 const CompleteButton = styled.button`
-    // width: 10px;
-    // height: 10px;
     margin-left: 10px;
     padding-top: 4px;
     border-radius: 3px;
@@ -99,8 +97,6 @@ const CompleteButton = styled.button`
 `;
 
 const DeleteButton = styled.button`
-    // width: 10px;
-    // height: 10px;
     margin-left: 5px;
     padding-top: 4px;
     border-radius: 3px;
