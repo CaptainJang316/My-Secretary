@@ -547,6 +547,7 @@ function ToDoList() {
                     {taskList == undefined? "" : <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>}
                     <ProgressBar value={taskList == undefined? 0 : (complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
                 </Board>
+                <Board></Board>
                 <div>
                     <BottomButtonListWrapper>
                         <BottomButton onClick={onClickCalendarButton}>피드백</BottomButton>
