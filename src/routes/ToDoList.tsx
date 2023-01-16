@@ -151,7 +151,6 @@ const BottomButton = styled.button`
 
 const ScheduleBox = styled.div`
     margin-top: 10px;
-    // margin-bottom: 20px;
     border: 1px solid #a0a096;
     height: 122px;
     padding: 10px;
