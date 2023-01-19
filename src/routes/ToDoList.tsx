@@ -404,7 +404,7 @@ function ToDoList() {
 
         
     const handleOnKeyPress = (e: { key: string; }) => {
-        if (e.key === 'Enter') {// Enter 입력이 되면 클릭 이벤트 실행
+        if (e.key === 'Enter') {
             
             if(!checkValidation())
                 addNewItem(); 
