@@ -12,7 +12,7 @@ import 'react-calendar/dist/Calendar.css';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import CSSTransition from 'react-transition-group/CSSTransition';
-
+import useToDoList from '../hook/useToDoList';
 
 const BoardWrappper = styled.div`
     text-align: center;
@@ -206,18 +206,12 @@ interface scheduleProps {
 }
 
 function ToDoList() {
-    const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
 
-    const [newTask, setNewTask] = React.useState<toDoItemProps>();
     const [taskInputValue, setTaskInputValue] = React.useState("");
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
-    const [showEmptyError, setShowEmptyError] = React.useState(false);
-    const [showExistingItemError, setShowExistingItemError] = React.useState(false);
 
-
-    const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [reloadData, setReloadData] = React.useState(false);
     const [yesterdayFlag, setYesterdayFlag] = React.useState(false);
     const [tomorrowFlag, setTomorrowFlag] = React.useState(false);
@@ -225,6 +219,7 @@ function ToDoList() {
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [openFeedBackBoard, setOpenFeedBackBoard] = React.useState(false);
+    const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
 
     const getCurrentDate = (dateData = new Date) => {
         const date = dateData;
@@ -260,24 +255,6 @@ function ToDoList() {
             });
         })()
     }, [currentDate]);
-
-    useEffect(() => {
-        (async() => {
-            const res = await axios.get(`/api/todolist/${currentDate}`);
-
-            const toDoListData = await res.data.products && res.data.products.map((rowData : toDoItemProps) => (
-                {
-                    id : rowData.id,
-                    text : rowData.text,
-                    isComplished : rowData.isComplished,
-                    date: rowData.date,
-                }
-            ));
-
-            setTaskList(toDoListData);
-        })()
-      }, [reloadData, currentDate]);
-
     
     useEffect(() => {
         const date = getCurrentDate(selectedDate);
@@ -292,11 +269,29 @@ function ToDoList() {
             ));
             setScheduleList(scheduleListData);
         });
-    }, [reloadScheduleData])
+    }, [reloadScheduleData]);
+
+    useEffect(() => {
+        (async() => {
+            const res = await axios.get(`/api/todolist/${currentDate}`);
+    
+            const toDoListData = await res.data.products && res.data.products.map((rowData : toDoItemProps) => (
+                {
+                    id : rowData.id,
+                    text : rowData.text,
+                    isComplished : rowData.isComplished,
+                    date: rowData.date,
+                }
+            ));
+    
+            setTaskList(toDoListData);
+        })()
+      }, [reloadData, currentDate]);
+
 
     useEffect(() => {
 
-    }, [openFeedBackBoard])
+    }, [openFeedBackBoard]);
 
     // useEffect(() => {
     //     setSelectedDateScheduleList(
@@ -304,28 +299,22 @@ function ToDoList() {
     //     )
     // }, [selectedDate, scheduleList]); 
     
-    const ErrorMessage = useMemo(()=>{
-        return <>{showEmptyError? "내용을 입력하세요." 
-                    : showExistingItemError? "해당 항목은 이미 존재합니다." : ""}</>;
-    }, [showEmptyError, showExistingItemError]);
+
+    const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
+    const { checkValidation, addNewItem, onComplish, onRemove, onChange, ErrorMessage } = useToDoList(currentDate, taskList);
+    
 
 
+    const handleOnKeyPress = (e: { key: string; }) => {
+        if (e.key === 'Enter') {
+            
+            if(!checkValidation())
+                addNewItem(); 
+            else setIsModalOpen(true);
+        }
+    };
       
-    const onChange = (event: any) => {
-        setTaskInputValue(event.target.value);
-    };
-
-    const addNewItem = () => {
-        const params = [taskInputValue, false, currentDate];
-        axios.post('/api/addNewTask', {
-            params : params
-          })
-        .then(res => {
-            setReloadData(!reloadData);
-            setTaskInputValue("");
-        })
-        .catch();
-    };
+    
 
 
     const getYesterDayData = () => {
@@ -382,63 +371,7 @@ function ToDoList() {
         })
     };
 
-    const checkValidation = () => {
-        var flag = false;
-
-        if(taskInputValue.replace(/(\s*)/g, "") == "") {
-            setShowEmptyError(true);
-            return true;
-        } else {
-            taskList.forEach((taskItem) => {
-                if(taskItem.text.trim() == taskInputValue.trim()) {
-                    setShowEmptyError(false);
-                    setShowExistingItemError(true);
-                    flag = true;
-                    return false;
-                }
-            })
-        }
-        
-        return flag; 
-    };
-
-        
-    const handleOnKeyPress = (e: { key: string; }) => {
-        if (e.key === 'Enter') {
-            
-            if(!checkValidation())
-                addNewItem(); 
-            else setIsModalOpen(true);
-        }
-    };
-
-
-    const onComplish = (selectedTask : toDoItemProps) => {
-        // const currentTaskList = taskList;
-
-        const params = selectedTask.isComplished == false ? [true, selectedTask.id] : [false, selectedTask.id];
-        
-        axios.post('/api/toggleIsComplishTask', {
-            params : params
-          })
-        .then(res => setReloadData(!reloadData))
-        .catch()
-    };
-
-
-    const onRemove = (selectedTask : toDoItemProps) => {
-
-        axios.post('/api/deleteTask', {
-            params: selectedTask.id
-        }).then(() => setReloadData(!reloadData))
-        .catch();
-
-        // setTaskList(
-        //     taskList.filter(task => {
-        //     return task.text !== selectedTask.text;
-        //   })
-        // );
-    };
+    
 
 
     const onRemoveSchedule = (selectedItem : scheduleProps ) => {
