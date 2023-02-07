@@ -37,6 +37,11 @@
   }
 } */
 
+.show-board {
+  display: block !important;
+  width: 400px !important;
+}
+
 .complished-item {
   /* text-decoration:line-through;
   text-decoration-color: green; */

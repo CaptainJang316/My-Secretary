@@ -35,8 +35,10 @@ const Board = styled.div`
     opacity: 0.90;
 `;
 const FeedBackBoard = styled(Board)`
-    width: 400px;
+    width: 0px;
     background-color: #fff8dc;
+    display: none;
+    transition: display 1s, width 1s;
 `
 
 const Progress = styled.span`
@@ -147,13 +149,20 @@ const WhiteIoClose = styled(IoClose)`
 `;
 
 const BottomButtonListWrapper = styled.div`
-    display: inline-block;
-    margin: auto;
-    text-align: end;
+    margin-top: 50px;
+    display: block;
+    width: 100px;
 `
 
 const BottomButton = styled.button`
-    margin-left: 10px;
+    margin-bottom: 10px; 
+    width: 70px;
+    height: 40px;
+    font-weight: bold;
+    background-color: #808000;
+    border: none;
+    border-radius: 8px;
+    color: white;
 `
 
 const ScheduleBox = styled.div`
@@ -223,11 +232,12 @@ function ToDoList() {
     const [currentDate, setCurrentDate] = React.useState("");
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
-    const [openFeedBackBoard, setOpenFeedBackBoard] = React.useState(false);
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
+    const [ feedbackBoardClass, setFeedbackBoardClass ] = React.useState("");
 
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
     const { reloadData, taskInputValue, checkValidation, addNewItem, onComplish, onRemove, onChange, ErrorMessage } = useToDoList(currentDate, taskList);
+
 
 
     const getCurrentDate = (dateData = new Date) => {
@@ -296,11 +306,6 @@ function ToDoList() {
             setTaskList(toDoListData);
         })()
       }, [reloadData, currentDate]);
-
-
-    useEffect(() => {
-
-    }, [openFeedBackBoard]);
 
     // useEffect(() => {
     //     setSelectedDateScheduleList(
@@ -413,7 +418,7 @@ function ToDoList() {
     }
 
     const onClickFeedbackButton = () => {
-        setOpenFeedBackBoard(true);
+        feedbackBoardClass == "" ? setFeedbackBoardClass("show-board") : setFeedbackBoardClass("");
     }
 
     const changeCalendarDate = (changedValue: any) => {
@@ -484,10 +489,14 @@ function ToDoList() {
                     {taskList == undefined? "" : <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>}
                     <ProgressBar value={taskList == undefined? 0 : (complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
                 </Board>
-                <FeedBackBoard></FeedBackBoard>
+                <FeedBackBoard className={feedbackBoardClass}>
+                    <BoardTitle>
+                        Today's Feedback
+                    </BoardTitle>
+                </FeedBackBoard>
                 <div>
                     <BottomButtonListWrapper>
-                        <BottomButton onClick={onClickCalendarButton}>피드백</BottomButton>
+                        <BottomButton onClick={onClickFeedbackButton}>피드백</BottomButton>
                         <BottomButton onClick={onClickCalendarButton}>일정</BottomButton>
                     </BottomButtonListWrapper>
                 </div>
