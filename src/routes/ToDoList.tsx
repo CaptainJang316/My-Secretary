@@ -17,10 +17,12 @@ import useToDoList from '../hook/useToDoList';
 const BoardWrappper = styled.div`
     text-align: center;
     margin: auto;
+    display: flex;
+    justify-content: center;
 `;
 
 const Board = styled.div`
-    margin: 50px 50px 15px 50px;
+    margin: 50px 5px 15px 5px;
     padding: 20px;
     pading-bottom: 0px;
     width: 250px;
@@ -32,6 +34,10 @@ const Board = styled.div`
     position: relative;
     opacity: 0.90;
 `;
+const FeedBackBoard = styled(Board)`
+    width: 400px;
+    background-color: #fff8dc;
+`
 
 const Progress = styled.span`
     position: absolute;
@@ -142,6 +148,7 @@ const WhiteIoClose = styled(IoClose)`
 
 const BottomButtonListWrapper = styled.div`
     display: inline-block;
+    margin: auto;
     text-align: end;
 `
 
@@ -207,12 +214,10 @@ interface scheduleProps {
 
 function ToDoList() {
 
-    const [taskInputValue, setTaskInputValue] = React.useState("");
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
 
-    const [reloadData, setReloadData] = React.useState(false);
     const [yesterdayFlag, setYesterdayFlag] = React.useState(false);
     const [tomorrowFlag, setTomorrowFlag] = React.useState(false);
     const [currentDate, setCurrentDate] = React.useState("");
@@ -220,6 +225,10 @@ function ToDoList() {
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [openFeedBackBoard, setOpenFeedBackBoard] = React.useState(false);
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
+
+    const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
+    const { reloadData, taskInputValue, checkValidation, addNewItem, onComplish, onRemove, onChange, ErrorMessage } = useToDoList(currentDate, taskList);
+
 
     const getCurrentDate = (dateData = new Date) => {
         const date = dateData;
@@ -298,11 +307,7 @@ function ToDoList() {
     //         scheduleList.filter(element => Intl.DateTimeFormat('kr').format(selectedDate) == element.date)
     //     )
     // }, [selectedDate, scheduleList]); 
-    
-
-    const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
-    const { checkValidation, addNewItem, onComplish, onRemove, onChange, ErrorMessage } = useToDoList(currentDate, taskList);
-    
+        
 
 
     const handleOnKeyPress = (e: { key: string; }) => {
@@ -479,7 +484,7 @@ function ToDoList() {
                     {taskList == undefined? "" : <Progress className={complishedItemCount == taskList.length? "completion" : ""}>{taskList.length != 0? (complishedItemCount / taskList.length * 100).toFixed(1)+" %" : ""}</Progress>}
                     <ProgressBar value={taskList == undefined? 0 : (complishedItemCount / taskList.length * 100).toFixed(0)} max="100"></ProgressBar>
                 </Board>
-                <Board></Board>
+                <FeedBackBoard></FeedBackBoard>
                 <div>
                     <BottomButtonListWrapper>
                         <BottomButton onClick={onClickCalendarButton}>피드백</BottomButton>

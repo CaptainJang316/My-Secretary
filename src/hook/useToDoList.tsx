@@ -16,6 +16,7 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
 
     const onChange = (event: any) => {
+        console.log("onChangeㅇㅇㅇ");
         setTaskInputValue(event.target.value);
     };
 
@@ -87,6 +88,8 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
 
     return {
+        reloadData,
+        taskInputValue,
         checkValidation, 
         addNewItem, 
         onComplish, 
