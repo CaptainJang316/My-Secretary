@@ -36,9 +36,14 @@ const Board = styled.div`
 `;
 const FeedBackBoard = styled(Board)`
     width: 0px;
+    margin: 30px 0;
+    padding: 0;
     background-color: #fff8dc;
-    display: none;
-    transition: display 1s, width 1s;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, margin 0.6s, padding 0.6s, width 0.4s, visibility 0.4s;
+    text-align: start;
+    // font-size: 0;
 `
 
 const Progress = styled.span`
@@ -127,7 +132,32 @@ const ScheduleLi = styled.li`
 const BoardTitle = styled.h3`
     margin-top: 0px;
     position: relative;
+    text-align: center;
 `
+
+const FeedbackTopic = styled.li`
+    margin: 15px 0;
+    // position: relative;
+    text-align: start;
+    font-weight: bold;
+`
+const Textarea = styled.textarea`
+    width: 98%;
+    height: 145px;
+    font-size: 14px;
+    // font-weight: bold;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    padding: 5px;
+    resize: none;
+    border: 1px solid #f0e68c;
+    border-radius: 5px;
+    &: focus {
+        outline: 1px solid #ffd700;
+    }
+`
+
 
 const ModalButton = styled.button`
     position: absolute;
@@ -149,9 +179,10 @@ const WhiteIoClose = styled(IoClose)`
 `;
 
 const BottomButtonListWrapper = styled.div`
-    margin-top: 50px;
+    margin: 50px 5px;
     display: block;
     width: 100px;
+    text-align: start;
 `
 
 const BottomButton = styled.button`
@@ -493,6 +524,14 @@ function ToDoList() {
                     <BoardTitle>
                         Today's Feedback
                     </BoardTitle>
+                    <FeedbackTopic>
+                        Good Point
+                    </FeedbackTopic>
+                    <Textarea/>
+                    <FeedbackTopic>
+                        Bad Point
+                    </FeedbackTopic>
+                    <Textarea/>
                 </FeedBackBoard>
                 <div>
                     <BottomButtonListWrapper>

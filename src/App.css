@@ -38,8 +38,12 @@
 } */
 
 .show-board {
-  display: block !important;
+  /* display: block !important; */
   width: 400px !important;
+  opacity: 0.9 !important;
+  visibility: visible !important;
+  margin: 50px 5px 15px 5px !important;
+  padding: 20px !important;
 }
 
 .complished-item {
