@@ -26,7 +26,7 @@ const Board = styled.div`
     padding: 20px;
     pading-bottom: 0px;
     width: 250px;
-    height: 28rem; 
+    height: 30rem; 
     border: 1px solid black;
     border-radius: 10px;
     background-color: #F0F8FF;
@@ -36,12 +36,12 @@ const Board = styled.div`
 `;
 const FeedBackBoard = styled(Board)`
     width: 0px;
-    margin: 30px 0;
+    margin: 50px 0;
     padding: 0;
     background-color: #fff8dc;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s, margin 0.6s, padding 0.6s, width 0.4s, visibility 0.4s;
+    transition: opacity 0.3s, margin 0.6s, padding 0.3s, width 0.45s, visibility 0.4s;
     text-align: start;
     // font-size: 0;
 `
@@ -142,7 +142,7 @@ const FeedbackTopic = styled.li`
     font-weight: bold;
 `
 const Textarea = styled.textarea`
-    width: 98%;
+    width: 97%;
     height: 145px;
     font-size: 14px;
     // font-weight: bold;
@@ -186,14 +186,15 @@ const BottomButtonListWrapper = styled.div`
 `
 
 const BottomButton = styled.button`
+    opacity: 0.8;
     margin-bottom: 10px; 
     width: 70px;
     height: 40px;
     font-weight: bold;
-    background-color: #808000;
+    background-color: white;
     border: none;
     border-radius: 8px;
-    color: white;
+    color: black;
 `
 
 const ScheduleBox = styled.div`
@@ -237,6 +238,23 @@ const CustomIoMdArrowDropright = styled(IoMdArrowDropright)`
     font-size: 2rem;
 `;
 
+const SubmitButtonWrapper = styled.div`
+    margin-top: 10px;
+    text-align: center;
+`
+const SubmitButton = styled.input`
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #F4C430;
+
+    &:hover {
+        background-color: #FFD700;
+        font-weight: bold;
+    }
+` 
+
 
 
 interface toDoItemProps {
@@ -266,8 +284,9 @@ function ToDoList() {
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [ feedbackBoardClass, setFeedbackBoardClass ] = React.useState("");
 
+    
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
-    const { reloadData, taskInputValue, checkValidation, addNewItem, onComplish, onRemove, onChange, ErrorMessage } = useToDoList(currentDate, taskList);
+    const { reloadData, taskInputValue, checkValidation, addNewItem, onComplish, onRemove, onChange, goodPointInputValue, badPointInputValue, onChangeFeedBackGP, onChangeFeedBackBP, submitFeedBack, ErrorMessage } = useToDoList(currentDate, taskList);
 
 
 
@@ -524,18 +543,29 @@ function ToDoList() {
                     <BoardTitle>
                         Today's Feedback
                     </BoardTitle>
-                    <FeedbackTopic>
-                        Good Point
-                    </FeedbackTopic>
-                    <Textarea/>
-                    <FeedbackTopic>
-                        Bad Point
-                    </FeedbackTopic>
-                    <Textarea/>
+                    <form onSubmit={submitFeedBack}>
+                        <FeedbackTopic>
+                            Good Point
+                        </FeedbackTopic>
+                        <Textarea
+                            value={goodPointInputValue}
+                            onChange={onChangeFeedBackGP}
+                        />
+                        <FeedbackTopic>
+                            Bad Point
+                        </FeedbackTopic>
+                        <Textarea
+                            value={badPointInputValue}
+                            onChange={onChangeFeedBackBP}
+                        />
+                        <SubmitButtonWrapper>
+                            <SubmitButton type="submit" value="완료" />
+                        </SubmitButtonWrapper>
+                    </form>
                 </FeedBackBoard>
                 <div>
                     <BottomButtonListWrapper>
-                        <BottomButton onClick={onClickFeedbackButton}>피드백</BottomButton>
+                        <BottomButton onClick={onClickFeedbackButton}>{feedbackBoardClass == "" ? "피드백" : "닫기"}</BottomButton>
                         <BottomButton onClick={onClickCalendarButton}>일정</BottomButton>
                     </BottomButtonListWrapper>
                 </div>

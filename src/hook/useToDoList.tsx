@@ -14,11 +14,34 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
 
+    const [goodPointInputValue, setGoodPointInputValue] = React.useState("");
+    const [badPointInputValue, setBadPointInputValue] = React.useState("");
+
+    const onChangeFeedBackGP = (event: any) => {
+        console.log("onChangeFeedBackGP!");
+        setGoodPointInputValue(event.target.value);
+    }
+
+    const onChangeFeedBackBP = (event: any) => {
+        setBadPointInputValue(event.target.value);
+    }
 
     const onChange = (event: any) => {
-        console.log("onChangeㅇㅇㅇ");
         setTaskInputValue(event.target.value);
     };
+
+    const submitFeedBack = () => {
+        const params = [goodPointInputValue, badPointInputValue, currentDate];
+        axios.post('/api/submitFeedBack', {
+            params : params
+        })
+        .then(res => {
+            setReloadData(!reloadData);
+            setTaskInputValue("");
+        })
+        .catch();
+    };
+
 
     const addNewItem = () => {
         const params = [taskInputValue, false, currentDate];
@@ -95,6 +118,11 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
         onComplish, 
         onRemove,  
         onChange,
+        goodPointInputValue,
+        badPointInputValue,
+        onChangeFeedBackGP,
+        onChangeFeedBackBP,
+        submitFeedBack,
         ErrorMessage
     }
 };
