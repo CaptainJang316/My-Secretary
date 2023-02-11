@@ -270,6 +270,13 @@ interface scheduleProps {
     date: string,
 }
 
+interface feedBackProps {
+    id: number;
+    goodPoint: string; 
+    badPoint: string;
+    date: string;
+};
+
 function ToDoList() {
 
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -282,6 +289,7 @@ function ToDoList() {
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
+    const [feedBack, setFeedBack] = React.useState<feedBackProps[]>([]);
     const [ feedbackBoardClass, setFeedbackBoardClass ] = React.useState("");
 
     
@@ -342,9 +350,8 @@ function ToDoList() {
 
     useEffect(() => {
         (async() => {
-            const res = await axios.get(`/api/todolist/${currentDate}`);
-    
-            const toDoListData = await res.data.products && res.data.products.map((rowData : toDoItemProps) => (
+            const toDoListResponse = await axios.get(`/api/todolist/${currentDate}`);
+            const toDoListData = await toDoListResponse.data.products && toDoListResponse.data.products.map((rowData : toDoItemProps) => (
                 {
                     id : rowData.id,
                     text : rowData.text,
@@ -352,8 +359,12 @@ function ToDoList() {
                     date: rowData.date,
                 }
             ));
-    
             setTaskList(toDoListData);
+
+            const feedBackResponse = await axios.get(`/api/feedback/${currentDate}`);
+            const feedBackData = await feedBackResponse.data.products;
+            console.log("feedBackData: ", feedBackData);
+            setFeedBack(feedBackData);
         })()
       }, [reloadData, currentDate]);
 

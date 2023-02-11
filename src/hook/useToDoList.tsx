@@ -32,10 +32,11 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
     const submitFeedBack = () => {
         const params = [goodPointInputValue, badPointInputValue, currentDate];
-        axios.post('/api/submitFeedBack', {
+        axios.post('/api/addNewFeedBack', {
             params : params
         })
         .then(res => {
+            console.log("res: ", res);
             setReloadData(!reloadData);
             setTaskInputValue("");
         })
