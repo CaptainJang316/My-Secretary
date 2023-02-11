@@ -271,10 +271,8 @@ interface scheduleProps {
 }
 
 interface feedBackProps {
-    id: number;
     goodPoint: string; 
     badPoint: string;
-    date: string;
 };
 
 function ToDoList() {
@@ -289,7 +287,7 @@ function ToDoList() {
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
-    const [feedBack, setFeedBack] = React.useState<feedBackProps[]>([]);
+    const [feedBack, setFeedBack] = React.useState<feedBackProps>();
     const [ feedbackBoardClass, setFeedbackBoardClass ] = React.useState("");
 
     
@@ -362,12 +360,16 @@ function ToDoList() {
             setTaskList(toDoListData);
 
             const feedBackResponse = await axios.get(`/api/feedback/${currentDate}`);
-            const feedBackData = await feedBackResponse.data.products;
+            const feedBackData : feedBackProps = {
+                goodPoint: feedBackResponse.data.products && feedBackResponse.data.products[0].goodPoint,
+                badPoint: feedBackResponse.data.products && feedBackResponse.data.products[0].badPoint
+            };
             console.log("feedBackData: ", feedBackData);
             setFeedBack(feedBackData);
         })()
       }, [reloadData, currentDate]);
 
+      console.log("feedBack: ", feedBack);
     // useEffect(() => {
     //     setSelectedDateScheduleList(
     //         scheduleList.filter(element => Intl.DateTimeFormat('kr').format(selectedDate) == element.date)
@@ -558,17 +560,21 @@ function ToDoList() {
                         <FeedbackTopic>
                             Good Point
                         </FeedbackTopic>
-                        <Textarea
+                        {feedBack? 
+                        feedBack.goodPoint
+                        : <Textarea
                             value={goodPointInputValue}
                             onChange={onChangeFeedBackGP}
-                        />
+                        />}
                         <FeedbackTopic>
                             Bad Point
                         </FeedbackTopic>
-                        <Textarea
+                        {feedBack? 
+                        feedBack.badPoint
+                        : <Textarea
                             value={badPointInputValue}
                             onChange={onChangeFeedBackBP}
-                        />
+                        />}
                         <SubmitButtonWrapper>
                             <SubmitButton type="submit" value="완료" />
                         </SubmitButtonWrapper>
