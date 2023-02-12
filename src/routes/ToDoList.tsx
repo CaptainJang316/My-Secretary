@@ -239,11 +239,13 @@ const CustomIoMdArrowDropright = styled(IoMdArrowDropright)`
 `;
 
 const SubmitButtonWrapper = styled.div`
-    margin-top: 10px;
-    text-align: center;
+    // margin-top: 10px;
+    // text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
 `
 const SubmitButton = styled.input`
-    width: 100%;
     border: none;
     border-radius: 5px;
     padding: 5px;
@@ -254,6 +256,10 @@ const SubmitButton = styled.input`
         font-weight: bold;
     }
 ` 
+const EditButton = styled(SubmitButton)`
+    background-color: green;
+    color: white;  
+`
 
 
 
@@ -360,12 +366,19 @@ function ToDoList() {
             setTaskList(toDoListData);
 
             const feedBackResponse = await axios.get(`/api/feedback/${currentDate}`);
-            const feedBackData : feedBackProps = {
-                goodPoint: feedBackResponse.data.products && feedBackResponse.data.products[0].goodPoint,
-                badPoint: feedBackResponse.data.products && feedBackResponse.data.products[0].badPoint
-            };
-            console.log("feedBackData: ", feedBackData);
-            setFeedBack(feedBackData);
+        
+            let feedBackData : feedBackProps;
+            if(feedBackResponse.data.products && feedBackResponse.data.products.length != 0) {
+                feedBackData = {
+                    goodPoint: feedBackResponse.data.products[0].goodPoint,
+                    badPoint: feedBackResponse.data.products[0].badPoint
+                }
+                setFeedBack(feedBackData);
+            } else setFeedBack(undefined);
+
+            console.log("feedBackResponse.data.products: ", feedBackResponse.data.products);
+
+            // console.log("feedBackData: ", feedBackData);
         })()
       }, [reloadData, currentDate]);
 
