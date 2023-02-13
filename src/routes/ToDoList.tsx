@@ -249,6 +249,7 @@ const SubmitButton = styled.input`
     border: none;
     border-radius: 5px;
     padding: 5px;
+    width: 91%;
     background-color: #F4C430;
 
     &:hover {
@@ -256,9 +257,20 @@ const SubmitButton = styled.input`
         font-weight: bold;
     }
 ` 
-const EditButton = styled(SubmitButton)`
-    background-color: green;
+const EditButton = styled.input`
+    border: none;
+    border-radius: 5px;
+    padding: 6.3px;
+    width: 88.6%;
+    background-color: #BDB76B;
+    text-align: center;
     color: white;  
+    
+    &:hover {
+        background-color: #228B22;
+        font-weight: bold;
+        outline: none;
+    }
 `
 
 
@@ -294,7 +306,8 @@ function ToDoList() {
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [feedBack, setFeedBack] = React.useState<feedBackProps>();
-    const [ feedbackBoardClass, setFeedbackBoardClass ] = React.useState("");
+    const [feedbackBoardClass, setFeedbackBoardClass] = React.useState("");
+    const [editFeedBackflag, setEditFeedBackflag] = React.useState(false);
 
     
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
@@ -573,23 +586,30 @@ function ToDoList() {
                         <FeedbackTopic>
                             Good Point
                         </FeedbackTopic>
-                        {feedBack? 
-                        feedBack.goodPoint
-                        : <Textarea
-                            value={goodPointInputValue}
-                            onChange={onChangeFeedBackGP}
-                        />}
+                        {editFeedBackflag? <Textarea
+                                value={feedBack?.goodPoint}
+                                onChange={onChangeFeedBackGP}
+                            />
+                            : feedBack? feedBack.goodPoint
+                                : <Textarea
+                                    value={goodPointInputValue}
+                                    onChange={onChangeFeedBackGP}
+                                />}
                         <FeedbackTopic>
                             Bad Point
                         </FeedbackTopic>
-                        {feedBack? 
-                        feedBack.badPoint
-                        : <Textarea
-                            value={badPointInputValue}
-                            onChange={onChangeFeedBackBP}
-                        />}
+                        {editFeedBackflag? <Textarea
+                                    value={feedBack?.badPoint}
+                                    onChange={onChangeFeedBackBP}
+                                />
+                            : feedBack? feedBack.badPoint
+                                : <Textarea
+                                    value={badPointInputValue}
+                                    onChange={onChangeFeedBackBP}
+                                />}
                         <SubmitButtonWrapper>
-                            <SubmitButton type="submit" value="완료" />
+                            {editFeedBackflag? <SubmitButton type="submit" value="완료" /> 
+                                : feedBack? <EditButton onClick={() => setEditFeedBackflag(true)} value="수정하기"/> : <SubmitButton type="submit" value="완료" />}
                         </SubmitButtonWrapper>
                     </form>
                 </FeedBackBoard>
