@@ -122,13 +122,15 @@ app.post('/addNewFeedBack', (req,res) => {
 
 app.post('/updateFeedBack', (req,res) => {
 
-  const sql = "UPDATE `todolist`.`feedback_table` goodPoint=?, badPoint=? WHERE date=?";
+  console.log("update req!!: ", req);
+  const sql = "UPDATE `todolist`.`feedback_table` SET goodPoint=?, badPoint=? WHERE date=?";
 
   db.query(sql, req.body.params, (err, data) => {
     if(!err) {
-        console.log("update!!: ", res);
+        console.log("update res!!!: ", res);
         res.send(data)
     } else {
+        console.log("update err!!!: ", err);
         res.send(err)
     }});
 })
