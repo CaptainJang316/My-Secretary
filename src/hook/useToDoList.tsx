@@ -22,7 +22,6 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
     const [goodPointInputValue, setGoodPointInputValue] = React.useState("");
     const [badPointInputValue, setBadPointInputValue] = React.useState("");
     const [feedBack, setFeedBack] = React.useState<feedBackProps>();
-    // const [editFeedBackflag, setEditFeedBackflag] = React.useState(false);
 
     const onChangeFeedBackGP = (event: any) => {
         console.log("onChangeFeedBackGP!");
@@ -133,6 +132,7 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
     const getFeedBackData = async() => {
         const feedBackResponse = await axios.get(`/api/feedback/${currentDate}`);
+        console.log("currentDate: ", currentDate);
         
         let feedBackData : feedBackProps;
         if(feedBackResponse.data.products && feedBackResponse.data.products.length != 0) {
@@ -144,7 +144,11 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
             setGoodPointInputValue(feedBackResponse.data.products[0].goodPoint);
             setBadPointInputValue(feedBackResponse.data.products[0].badPoint);
-        } else setFeedBack(undefined);
+        } else {
+            setFeedBack(undefined);
+            setGoodPointInputValue("");
+            setBadPointInputValue("");
+        }
     }
 
 
