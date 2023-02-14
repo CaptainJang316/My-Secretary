@@ -288,11 +288,6 @@ interface scheduleProps {
     date: string,
 }
 
-interface feedBackProps {
-    goodPoint: string; 
-    badPoint: string;
-};
-
 function ToDoList() {
 
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -305,13 +300,11 @@ function ToDoList() {
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
-    const [feedBack, setFeedBack] = React.useState<feedBackProps>();
     const [feedbackBoardClass, setFeedbackBoardClass] = React.useState("");
     const [editFeedBackflag, setEditFeedBackflag] = React.useState(false);
-
     
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
-    const { reloadData, taskInputValue, checkValidation, addNewItem, onComplish, onRemove, onChange, goodPointInputValue, badPointInputValue, onChangeFeedBackGP, onChangeFeedBackBP, submitFeedBack, ErrorMessage } = useToDoList(currentDate, taskList);
+    const { reloadData, taskInputValue, checkValidation, addNewItem, onComplish, onRemove, onChange, feedBack, getFeedBackData, goodPointInputValue, badPointInputValue, onChangeFeedBackGP, onChangeFeedBackBP, submitFeedBack, ErrorMessage } = useToDoList(currentDate, taskList);
 
 
 
@@ -347,6 +340,8 @@ function ToDoList() {
                     setTomorrowFlag(true);
                 }
             });
+
+            getFeedBackData();
         })()
     }, [currentDate]);
     
@@ -378,18 +373,9 @@ function ToDoList() {
             ));
             setTaskList(toDoListData);
 
-            const feedBackResponse = await axios.get(`/api/feedback/${currentDate}`);
-        
-            let feedBackData : feedBackProps;
-            if(feedBackResponse.data.products && feedBackResponse.data.products.length != 0) {
-                feedBackData = {
-                    goodPoint: feedBackResponse.data.products[0].goodPoint,
-                    badPoint: feedBackResponse.data.products[0].badPoint
-                }
-                setFeedBack(feedBackData);
-            } else setFeedBack(undefined);
+            
 
-            console.log("feedBackResponse.data.products: ", feedBackResponse.data.products);
+            // console.log("feedBackResponse.data.products: ", feedBackResponse.data.products);
 
             // console.log("feedBackData: ", feedBackData);
         })()
@@ -582,12 +568,12 @@ function ToDoList() {
                     <BoardTitle>
                         Today's Feedback
                     </BoardTitle>
-                    <form onSubmit={submitFeedBack}>
+                    <form onSubmit={() => submitFeedBack(editFeedBackflag)}>
                         <FeedbackTopic>
                             Good Point
                         </FeedbackTopic>
                         {editFeedBackflag? <Textarea
-                                value={feedBack?.goodPoint}
+                                value={goodPointInputValue}
                                 onChange={onChangeFeedBackGP}
                             />
                             : feedBack? feedBack.goodPoint
@@ -599,7 +585,7 @@ function ToDoList() {
                             Bad Point
                         </FeedbackTopic>
                         {editFeedBackflag? <Textarea
-                                    value={feedBack?.badPoint}
+                                    value={badPointInputValue}
                                     onChange={onChangeFeedBackBP}
                                 />
                             : feedBack? feedBack.badPoint

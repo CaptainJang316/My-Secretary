@@ -8,6 +8,11 @@ interface toDoItemProps {
     date: string;
 };
 
+interface feedBackProps {
+    goodPoint: string; 
+    badPoint: string;
+};
+
 function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
     const [taskInputValue, setTaskInputValue] = React.useState("");
     const [reloadData, setReloadData] = React.useState(false);
@@ -16,6 +21,8 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
     const [goodPointInputValue, setGoodPointInputValue] = React.useState("");
     const [badPointInputValue, setBadPointInputValue] = React.useState("");
+    const [feedBack, setFeedBack] = React.useState<feedBackProps>();
+    // const [editFeedBackflag, setEditFeedBackflag] = React.useState(false);
 
     const onChangeFeedBackGP = (event: any) => {
         console.log("onChangeFeedBackGP!");
@@ -30,17 +37,30 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
         setTaskInputValue(event.target.value);
     };
 
-    const submitFeedBack = () => {
+    const submitFeedBack = (isEdit : boolean) => {
         const params = [goodPointInputValue, badPointInputValue, currentDate];
-        axios.post('/api/addNewFeedBack', {
-            params : params
-        })
-        .then(res => {
-            console.log("res: ", res);
-            setReloadData(!reloadData);
-            setTaskInputValue("");
-        })
-        .catch();
+
+        if(isEdit) {
+            axios.post('/api/updateFeedBack', {
+                params : params
+            })
+            .then(res => {
+                console.log("update - res: ", res);
+                setReloadData(!reloadData);
+                setTaskInputValue("");
+            })
+            .catch();
+        } else {
+            axios.post('/api/addNewFeedBack', {
+                params : params
+            })
+            .then(res => {
+                console.log("add - res: ", res);
+                setReloadData(!reloadData);
+                setTaskInputValue("");
+            })
+            .catch();
+        }
     };
 
 
@@ -111,6 +131,23 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
     }, [showEmptyError, showExistingItemError]);
 
 
+    const getFeedBackData = async() => {
+        const feedBackResponse = await axios.get(`/api/feedback/${currentDate}`);
+        
+        let feedBackData : feedBackProps;
+        if(feedBackResponse.data.products && feedBackResponse.data.products.length != 0) {
+            feedBackData = {
+                goodPoint: feedBackResponse.data.products[0].goodPoint,
+                badPoint: feedBackResponse.data.products[0].badPoint
+            }
+            setFeedBack(feedBackData);
+
+            setGoodPointInputValue(feedBackResponse.data.products[0].goodPoint);
+            setBadPointInputValue(feedBackResponse.data.products[0].badPoint);
+        } else setFeedBack(undefined);
+    }
+
+
     return {
         reloadData,
         taskInputValue,
@@ -119,6 +156,8 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
         onComplish, 
         onRemove,  
         onChange,
+        feedBack,
+        getFeedBackData,
         goodPointInputValue,
         badPointInputValue,
         onChangeFeedBackGP,
