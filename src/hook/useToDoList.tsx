@@ -13,12 +13,12 @@ interface feedBackProps {
     badPoint: string;
 };
 
-function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
+function useToDoList(currentDate:string) {
     const [taskInputValue, setTaskInputValue] = React.useState("");
     const [reloadData, setReloadData] = React.useState(false);
     const [showEmptyError, setShowEmptyError] = React.useState(false);
     const [showExistingItemError, setShowExistingItemError] = React.useState(false);
-
+    const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [goodPointInputValue, setGoodPointInputValue] = React.useState("");
     const [badPointInputValue, setBadPointInputValue] = React.useState("");
     const [feedBack, setFeedBack] = React.useState<feedBackProps>();
@@ -36,7 +36,7 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
         setTaskInputValue(event.target.value);
     };
 
-    const submitFeedBack = (isEdit : boolean) => {
+    const submitFeedBack = (isEdit : boolean, event: React.FormEvent) => {
         const params = [goodPointInputValue, badPointInputValue, currentDate];
 
         if(isEdit) {
@@ -46,7 +46,6 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
             .then(res => {
                 console.log("update - res: ", res);
                 setReloadData(!reloadData);
-                setTaskInputValue("");
             })
             .catch();
         } else {
@@ -56,10 +55,11 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
             .then(res => {
                 console.log("add - res: ", res);
                 setReloadData(!reloadData);
-                setTaskInputValue("");
             })
             .catch();
         }
+
+        event.preventDefault();
     };
 
 
@@ -130,6 +130,21 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
     }, [showEmptyError, showExistingItemError]);
 
 
+    
+    const getToDoListData = async() => {
+        const toDoListResponse = await axios.get(`/api/todolist/${currentDate}`);
+            const toDoListData = await toDoListResponse.data.products && toDoListResponse.data.products.map((rowData : toDoItemProps) => (
+                {
+                    id : rowData.id,
+                    text : rowData.text,
+                    isComplished : rowData.isComplished,
+                    date: rowData.date,
+                }
+            ));
+            setTaskList(toDoListData);
+    }
+
+
     const getFeedBackData = async() => {
         const feedBackResponse = await axios.get(`/api/feedback/${currentDate}`);
         console.log("currentDate: ", currentDate);
@@ -144,6 +159,8 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
             setGoodPointInputValue(feedBackResponse.data.products[0].goodPoint);
             setBadPointInputValue(feedBackResponse.data.products[0].badPoint);
+
+            console.log("feedBackData~!!: ", feedBackData);
         } else {
             setFeedBack(undefined);
             setGoodPointInputValue("");
@@ -154,8 +171,10 @@ function useToDoList(currentDate:string, taskList:toDoItemProps[]) {
 
     return {
         reloadData,
+        taskList,
         taskInputValue,
         checkValidation, 
+        getToDoListData,
         addNewItem, 
         onComplish, 
         onRemove,  

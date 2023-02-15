@@ -299,12 +299,11 @@ function ToDoList() {
     const [currentDate, setCurrentDate] = React.useState("");
     const [scheduleList, setScheduleList] = React.useState<scheduleProps[]>([]);
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
-    const [taskList, setTaskList] = React.useState<toDoItemProps[]>([]);
     const [feedbackBoardClass, setFeedbackBoardClass] = React.useState("");
     const [editFeedBackflag, setEditFeedBackflag] = React.useState(false);
     
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
-    const { reloadData, taskInputValue, checkValidation, addNewItem, onComplish, onRemove, onChange, feedBack, getFeedBackData, goodPointInputValue, badPointInputValue, onChangeFeedBackGP, onChangeFeedBackBP, submitFeedBack, ErrorMessage } = useToDoList(currentDate, taskList);
+    const { reloadData, taskList, taskInputValue, checkValidation, getToDoListData, addNewItem, onComplish, onRemove, onChange, feedBack, getFeedBackData, goodPointInputValue, badPointInputValue, onChangeFeedBackGP, onChangeFeedBackBP, submitFeedBack, ErrorMessage } = useToDoList(currentDate);
 
 
 
@@ -362,22 +361,9 @@ function ToDoList() {
 
     useEffect(() => {
         (async() => {
-            const toDoListResponse = await axios.get(`/api/todolist/${currentDate}`);
-            const toDoListData = await toDoListResponse.data.products && toDoListResponse.data.products.map((rowData : toDoItemProps) => (
-                {
-                    id : rowData.id,
-                    text : rowData.text,
-                    isComplished : rowData.isComplished,
-                    date: rowData.date,
-                }
-            ));
-            setTaskList(toDoListData);
-
-            
-
-            // console.log("feedBackResponse.data.products: ", feedBackResponse.data.products);
-
-            // console.log("feedBackData: ", feedBackData);
+            getToDoListData();
+            getFeedBackData();
+            setEditFeedBackflag(false);
         })()
       }, [reloadData, currentDate]);
 
@@ -568,7 +554,7 @@ function ToDoList() {
                     <BoardTitle>
                         Today's Feedback
                     </BoardTitle>
-                    <form onSubmit={() => submitFeedBack(editFeedBackflag)}>
+                    <form onSubmit={(event) => submitFeedBack(editFeedBackflag, event)}>
                         <FeedbackTopic>
                             Good Point
                         </FeedbackTopic>
