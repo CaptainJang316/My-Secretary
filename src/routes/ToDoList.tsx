@@ -293,7 +293,6 @@ function ToDoList() {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = React.useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
-
     const [yesterdayFlag, setYesterdayFlag] = React.useState(false);
     const [tomorrowFlag, setTomorrowFlag] = React.useState(false);
     const [currentDate, setCurrentDate] = React.useState("");
@@ -301,7 +300,6 @@ function ToDoList() {
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [feedbackBoardClass, setFeedbackBoardClass] = React.useState("");
     const [editFeedBackflag, setEditFeedBackflag] = React.useState(false);
-    
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
     const { reloadData, taskList, taskInputValue, checkValidation, getToDoListData, addNewItem, onComplish, onRemove, onChange, feedBack, getFeedBackData, goodPointInputValue, badPointInputValue, onChangeFeedBackGP, onChangeFeedBackBP, submitFeedBack, ErrorMessage } = useToDoList(currentDate);
 
