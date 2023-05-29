@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import axios from 'axios';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import useToDoList from '../hook/useToDoList';
+import InputDragDrop from '../components/inputDragDrop';
 
 const BoardWrappper = styled.div`
     text-align: center;
@@ -25,7 +26,7 @@ const Board = styled.div`
     margin: 50px 5px 15px 5px;
     padding: 20px;
     pading-bottom: 0px;
-    width: 250px;
+    width: 300px;
     height: 30rem; 
     border: 1px solid black;
     border-radius: 10px;
@@ -136,7 +137,7 @@ const BoardTitle = styled.h3`
 `
 
 const FeedbackTopic = styled.li`
-    margin: 15px 0;
+    margin: 4px 0;
     // position: relative;
     text-align: start;
     font-weight: bold;
@@ -249,7 +250,7 @@ const SubmitButton = styled.input`
     border: none;
     border-radius: 5px;
     padding: 5px;
-    width: 91%;
+    width: 90%;
     background-color: #F4C430;
 
     &:hover {
@@ -300,6 +301,7 @@ function ToDoList() {
     const [reloadScheduleData, setReloadScheduleData] = React.useState(false);
     const [feedbackBoardClass, setFeedbackBoardClass] = React.useState("");
     const [editFeedBackflag, setEditFeedBackflag] = React.useState(false);
+    
     const { register, handleSubmit, watch, formState: {errors}, setError, setValue, getValues } = useForm<scheduleProps>();
     const { reloadData, taskList, taskInputValue, checkValidation, getToDoListData, addNewItem, onComplish, onRemove, onChange, feedBack, getFeedBackData, goodPointInputValue, badPointInputValue, onChangeFeedBackGP, onChangeFeedBackBP, submitFeedBack, ErrorMessage } = useToDoList(currentDate);
 
@@ -527,6 +529,7 @@ function ToDoList() {
                     <WhiteIoClose/>
                 </ModalButton>
             </Modal>
+            {/* <InputDragDrop/> */}
             <BoardWrappper>
                 <Board>
                     <BoardTitle>

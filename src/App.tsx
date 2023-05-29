@@ -6,6 +6,8 @@ import { Route, Routes } from 'react-router-dom';
 import ToDoList from './routes/ToDoList';
 import { RecoilRoot } from 'recoil';
 import styled from 'styled-components';
+import TimeDifference from './routes/TimeDifference';
+import Scheduler from './routes/Scheduler';
 
 
 const Wrapper = styled.div`
@@ -23,6 +25,8 @@ function App() {
         <MenuBar currentMenuItem="test" />
         <Routes>
           <Route path="/toDoList" element={<ToDoList/>}/>
+          <Route path="/diary" element={<TimeDifference/>}/>
+          <Route path="/scheduler" element={<Scheduler/>}/>
         </Routes>
       </Wrapper>      
     </RecoilRoot>
