@@ -74,6 +74,7 @@ function MenuBar({ currentMenuItem }: MenuBarProps) {
         <MenuLink to="/scheduler">일정 관리</MenuLink>
         <MenuLink to="/protein">단백질 섭취량</MenuLink>
         <MenuLink to="/bookEssay">독후 에세이</MenuLink>
+        <MenuLink to="/실험실">실험실</MenuLink>
       </Container>
     );
 }
