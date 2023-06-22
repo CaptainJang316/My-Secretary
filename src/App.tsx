@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import TimeDifference from './routes/TimeDifference';
 import Scheduler from './routes/Scheduler';
 import PptxGenJS from './routes/txtToPPT';
+import NutrientManagement from './routes/NutrientManagement';
 
 
 const Wrapper = styled.div`
@@ -29,6 +30,7 @@ function App() {
           <Route path="/diary" element={<TimeDifference/>}/>
           <Route path="/scheduler" element={<Scheduler/>}/>
           <Route path="/실험실" element={<PptxGenJS/>}/>
+          <Route path="/nutrient-management" element={<NutrientManagement/>}/>
         </Routes>
       </Wrapper>      
     </RecoilRoot>
