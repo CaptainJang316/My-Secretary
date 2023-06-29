@@ -104,3 +104,7 @@
 .calendar .react-calendar__tile {
   line-height: 20px;
 }
+
+.show-outputBoard {
+  visibility: visible !important;
+}

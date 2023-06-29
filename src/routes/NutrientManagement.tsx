@@ -13,10 +13,22 @@ const DashBoard = styled.div`
 const Board = styled.div`
     border: solid 1px lightgray;
     border-radius: 10px;
-    margin: 0px 30px;
+    margin: 0px 30px 20px 30px;
     padding: 20px;
-    height: 120px;
+    height: 140px;
     text-align: center;
+`
+
+const OutputBoard = styled(Board)`
+    height: 520px;
+    visibility: hidden;
+`
+
+const ResultDataBoard = styled(Board)`
+    height: 140px;
+    width: 200px;
+    margin: 0px 10px 20px 10px;
+    display: inline-block;
 `
 
 const InputBoxWrapper = styled.div`
@@ -53,6 +65,8 @@ function NutrientManagement() {
     const [tall, setTall] = useState('');
     const [weight, setWeight] = useState('');
     const [age, setAge] = useState('');
+    const [searchbtn, setSearchbtn] = useState(0);
+    const [showHideOutputBoard, setShowHideOutputBoard] = useState('');
 
 
     const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +94,13 @@ function NutrientManagement() {
     };
 
 
+    const onSearchBtnClick = () => {
+        console.log("searchbtn: " + searchbtn);
+        setSearchbtn(searchbtn + 1);
+        setShowHideOutputBoard("show-outputBoard");
+    }
       
+    
 
 
     return (
@@ -160,19 +180,19 @@ function NutrientManagement() {
                     <label>
                             <input
                                 type='radio'
-                                value="체중 감량"
-                                checked={selectedPurposeOption == "체중 감량"}
+                                value="다이어트"
+                                checked={selectedPurposeOption == "다이어트"}
                                 onChange={handleChangeRadioPurpose}
                             />
-                        </label> 체중 감량<br/>
+                        </label> 다이어트<br/>
                         <label>
                             <input
                                 type='radio'
-                                value="체중 유지"
-                                checked={selectedPurposeOption == "체중 유지"}
+                                value="린 메스업"
+                                checked={selectedPurposeOption == "린 메스업"}
                                 onChange={handleChangeRadioPurpose}
                             />
-                        </label> 체중 유지<br/>
+                        </label> 린 메스업<br/>
                         <label>
                             <input
                                 type='radio'
@@ -180,14 +200,36 @@ function NutrientManagement() {
                                 checked={selectedPurposeOption == "체중 증량"}
                                 onChange={handleChangeRadioPurpose}
                             />
-                        </label> 체중 증량(벌크업)
+                        </label> 체중 증량(벌크업)<br/>
+                        <label>
+                            <input
+                                type='radio'
+                                value="상승 다이어트"
+                                checked={selectedPurposeOption == "상승 다이어트"}
+                                onChange={handleChangeRadioPurpose}
+                            />
+                        </label> 상승 다이어트
                     </InputBox>
                 </InputBoxWrapper>
-                <SearchButton className="search-button">
+                <SearchButton className="search-button" onClick={onSearchBtnClick}>
                     <FontAwesomeIcon icon={faSearch} />
                     작성 완료
                 </SearchButton>
             </Board>
+            <OutputBoard className={showHideOutputBoard}>
+                <ResultDataBoard>
+                    <h5>탄수화물</h5>
+
+                </ResultDataBoard  >
+                <ResultDataBoard>
+                    <h5>단백질</h5>
+
+                </ResultDataBoard  >
+                <ResultDataBoard>
+                    <h5>지방</h5>
+
+                </ResultDataBoard  >
+            </OutputBoard>
         </DashBoard>
     );
 }
